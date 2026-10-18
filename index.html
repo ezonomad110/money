@@ -39,8 +39,7 @@
         <div class="field"><label for="startAge">現在の年齢</label><input id="startAge" type="number" min="18" max="100" value="40"></div>
         <div class="field"><label for="targetAge">目標寿命</label><input id="targetAge" type="number" min="50" max="120" value="90"></div>
         <div class="field"><label for="cash">現金・預金（万円）</label><input id="cash" type="number" min="0" step="10" value="500"></div>
-        <div class="field"><label for="nisaInvest">NISA資産残高（万円）</label><input id="nisaInvest" type="number" min="0" step="10" value="300"></div>
-        <div class="field"><label for="taxableInvest">課税口座資産（万円）</label><input id="taxableInvest" type="number" min="0" step="10" value="200"></div>
+        <div class="field full"><label for="totalInvest">投資資産の合計額（万円）</label><input id="totalInvest" type="number" min="0" step="10" value="500"><div class="hint">生涯投資枠1,800万円までNISA優先、超過分は課税口座に割り当てます</div></div>
         <div class="field"><label for="reserve">目標残存資産（万円）</label><input id="reserve" type="number" min="0" step="10" value="0"></div>
         <div class="field"><label for="ret">投資リターン（年率%）</label><input id="ret" type="number" min="0" max="15" step="0.1" value="4"></div>
         <div class="field"><label for="inflation">インフレ率（年率%）</label><input id="inflation" type="number" min="0" max="10" step="0.1" value="2"></div>
@@ -91,7 +90,7 @@
         <h3>税・NISAなど</h3>
         <div class="inputs">
             <div class="field"><label for="annualNisa">NISA年間投資上限（万円）</label><input id="annualNisa" type="number" min="0" max="360" value="360"></div>
-            <div class="field"><label for="nisaUsed">NISA生涯投資枠使用額（万円）</label><input id="nisaUsed" type="number" min="0" max="1800" value="300"></div>
+            <div class="field"><label for="nisaUsed">現在のNISA使用額（簿価・万円）</label><input id="nisaUsed" type="number" min="0" max="1800" value="300"></div>
             <div class="field"><label for="gainRatio">課税口座の含み益比率（%）</label><input id="gainRatio" type="number" min="0" max="100" value="20"></div>
         </div>
 
@@ -105,7 +104,7 @@
             ※現金は運用せず、投資資産は設定利回りで複利運用します。<br>
             ※税・社会保険料は概算値です（実際の法律や個人の状況により異なります）。<br>
             ※【名目モデルの採用】本シミュレーターは、名目リターン（投資リターン）で資産を増やしつつ、生活費や家賃などをインフレ率で毎年上昇させる「名目ベース」で計算を行っています。<br>
-            ※住宅購入時は「住宅価格 − 頭金」でローン借入額を自動算出します。諸費用（諸費用率%）は購入年の支出として計上されます。
+            ※投資資産は1,800万円の生涯投資枠までNISAに自動優先配分され、取り崩し時は課税口座から先に売却されます。
         </p>
     </div>
 </aside>
@@ -174,11 +173,11 @@
 'use strict';
 
 const $ = id => document.getElementById(id);
-const STORAGE = 'fireSimulatorSpecV9';
+const STORAGE = 'fireSimulatorSpecV10';
 let scenario = 'basic', detailed = false, events = [], lastResults = {};
 
 const DEFAULTS = {
-    startAge: 40, targetAge: 90, cash: 500, nisaInvest: 300, taxableInvest: 200, reserve: 0, 
+    startAge: 40, targetAge: 90, cash: 500, totalInvest: 500, reserve: 0, 
     ret: 4, inflation: 2, salary: 500, preSpend: 400, postSpend: 400, 
     crashPct: 30, workIncome: 0, workStart: 40, workEnd: 65, 
     pension: 150, pensionAge: 65, dc: 300, dcAge: 60, dcMethod: 'lump', 
@@ -323,7 +322,7 @@ function taxOnSale(gross, ratio, rate = 0.20315) {
 }
 
 /**
- * シミュレーションエンジン（厳正な計算ルール、破綻後不足額、住宅ローン自動算出対応）
+ * シミュレーションエンジン（NISA1,800万円優先配分＆課税口座優先取り崩し）
  */
 function simulate(o, opts = {}) {
     const start = clamp(Math.round(o.startAge), 18, 100);
@@ -331,9 +330,16 @@ function simulate(o, opts = {}) {
     const fireAge = opts.fireAge ?? start;
 
     let cash = Math.max(0, o.cash);
-    let nisaBalance = Math.max(0, o.nisaInvest);       
-    let taxableBalance = Math.max(0, o.taxableInvest); 
+    const totalInvestInput = Math.max(0, o.totalInvest);
     let nisaLifetimeUsed = clamp(o.nisaUsed, 0, 1800); 
+
+    // 新ルール：投資資産合計額を1,800万円生涯枠の残りに優先配分
+    const remainingNisaRoom = Math.max(0, 1800 - nisaLifetimeUsed);
+    let nisaBalance = Math.min(totalInvestInput, remainingNisaRoom);
+    let taxableBalance = Math.max(0, totalInvestInput - nisaBalance);
+    
+    // 初期配分されたNISA分枠を消費
+    nisaLifetimeUsed += nisaBalance;
 
     let dc = Math.max(0, o.dc);
     let dcPaid = false, retPayPaid = false, homeBought = false;
@@ -376,7 +382,6 @@ function simulate(o, opts = {}) {
             housing = Math.max(0, o.rent) * 12 * Math.pow(1 + o.rentInflation / 100, year);
         } else {
             if (!homeBought && age >= o.buyAge) {
-                // 住宅頭金と諸費用（諸費用率%）をワンオフ支出として計算
                 const homePrice = Math.max(0, Number(o.homePrice) || 0);
                 const downPayment = Math.max(0, Number(o.downPayment) || 0);
                 const closingFee = homePrice * Math.max(0, Number(o.closingPct) || 0) / 100;
@@ -384,7 +389,6 @@ function simulate(o, opts = {}) {
                 oneOff += (downPayment + closingFee);
                 homeBought = true;
 
-                // ローン借入額＝住宅価格 − 頭金
                 loanBalance = Math.max(0, homePrice - downPayment);
                 loanYearsLeft = Math.max(0, Math.round(o.loanYears));
                 annualMortgage = loanPayment(loanBalance, o.loanRate, loanYearsLeft);
@@ -401,7 +405,6 @@ function simulate(o, opts = {}) {
             }
         }
 
-        // 安全な支出イベントの参照
         const activeEvents = Array.isArray(o.events) ? o.events : events;
         activeEvents.forEach(e => {
             if (Math.round(Number(e.age)) === age) {
@@ -409,7 +412,6 @@ function simulate(o, opts = {}) {
             }
         });
 
-        // 税・社会保険料（概算）
         const grossSalary = salary + work;
         const salaryTax = incomeTax(grossSalary);
         const pensionTax = pension * .08;
@@ -420,7 +422,6 @@ function simulate(o, opts = {}) {
         let baseTaxes = salaryTax + pensionTax + otherIncomeTax + retirementTax + dcTax;
         let income = salary + work + pension + retirement + dcIncome + dcLump;
 
-        // 破綻後の正確な不足額の計算と記録
         if (isAlreadyBankrupt) {
             const totalExpenses = spend + housing + oneOff + baseTaxes;
             const shortfall = Math.max(0, totalExpenses - income);
@@ -451,21 +452,18 @@ function simulate(o, opts = {}) {
             continue;
         }
 
-        // 暴落処理（FIRE開始年齢に適用：年初下落モデル）
         if (age === fireAge && opts.scenario === 'crash') {
             const loss = clamp(o.crashPct, 0, 100) / 100;
             nisaBalance *= 1 - loss;
             taxableBalance *= 1 - loss;
         }
 
-        // 資産運用（名目リターンを適用）
         let r = returnRate;
         if (opts.scenario === 'low' && age >= fireAge && age < fireAge + 5) r = 0;
         nisaBalance *= 1 + r;
         taxableBalance *= 1 + r;
         dc *= 1 + r;
 
-        // 収支順序処理
         cash += income;
         const totalSpendAndTax = spend + housing + oneOff + baseTaxes;
         cash -= totalSpendAndTax;
@@ -493,6 +491,7 @@ function simulate(o, opts = {}) {
             let deficit = -cash; 
             const taxableGain = clamp(o.gainRatio / 100, 0, 1);
 
+            // 新ルール：課税口座（売却益課税あり）を先に売却
             if (taxableBalance > 0 && deficit > 0) {
                 const netRate = 1 - taxableGain * 0.20315;
                 const grossTaxableNeeded = deficit / Math.max(0.01, netRate);
@@ -507,6 +506,7 @@ function simulate(o, opts = {}) {
                 deficit = Math.max(0, -cash);
             }
 
+            // 新ルール：課税口座で不足する場合のみNISA（非課税）を後から取り崩す
             if (nisaBalance > 0 && deficit > 0) {
                 const grossNisaNeeded = Math.min(nisaBalance, deficit);
                 nisaBalance -= grossNisaNeeded;
@@ -752,7 +752,7 @@ function bind() {
 
 load();
 document.querySelectorAll('[data-scenario]').forEach(b => b.classList.toggle('active', b.dataset.scenario === scenario));
-$('detailSection').classList.toggle('hidden', !detailed);$('modeBtn').textContent = detailed ? '詳細設定を隠す' : '詳細設定を表示';
+$('detailSection').classList.toggle('hidden', !detailed);$('modeBtn').textContent = detailed ? '詳細設定を表示' : '詳細設定を表示';
 $('crashField').classList.toggle('hidden', scenario !== 'crash');
 renderEvents();
 bind();
