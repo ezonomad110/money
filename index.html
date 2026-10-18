@@ -1,467 +1,764 @@
-<!DOCTYPE html>
+
+<!doctype html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>次世代本格FIREシミュレーター</title>
-    <style>
-        :root {
-            --primary: #2563eb;
-            --primary-hover: #1d4ed8;
-            --success: #10b981;
-            --danger: #ef4444;
-            --bg: #f1f5f9;
-            --card-bg: #ffffff;
-            --text: #1e293b;
-            --text-sub: #64748b;
-            --border: #e2e8f0;
-        }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); padding: 15px; margin: 0; font-size: 13px; line-height: 1.5; }
-        .container { max-width: 650px; margin: 0 auto; }
-        h1 { text-align: center; color: var(--primary); font-size: 1.5rem; margin: 10px 0 20px; }
-        
-        .summary-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 15px; }
-        .summary-card { background: var(--card-bg); border-radius: 10px; padding: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.04); border-left: 4px solid var(--primary); }
-        .summary-card.alert { border-left-color: var(--danger); }
-        .summary-card.success { border-left-color: var(--success); }
-        .summary-title { font-size: 0.75rem; color: var(--text-sub); font-weight: bold; }
-        .summary-value { font-size: 1.1rem; font-weight: bold; margin-top: 4px; }
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>FIREシミュレーター | 未来の資産を試算</title>
+<style>
+:root{--bg:#f3f6fb;--panel:#fff;--ink:#182230;--muted:#64748b;--line:#dce4ef;--blue:#2459d3;--blue2:#eaf0ff;--orange:#c75b18;--green:#087f5b;--red:#c0392b;--shadow:0 8px 28px #19345b0c}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif;line-height:1.5}button,input,select{font:inherit}button{cursor:pointer}.wrap{max-width:1250px;margin:auto;padding:20px}.hero{padding:24px;border-radius:22px;background:linear-gradient(125deg,#142c55,#2459d3);color:white;box-shadow:var(--shadow);margin-bottom:18px}.hero h1{font-size:clamp(25px,4vw,38px);line-height:1.15;margin:0 0 8px;letter-spacing:-.04em}.hero p{margin:0;color:#dce7ff;font-size:14px}.top-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}.btn{border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:11px;padding:9px 13px;font-weight:650}.btn.primary{background:var(--blue);color:white;border-color:var(--blue)}.btn.ghost{background:#ffffff18;color:white;border-color:#ffffff55}.btn:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #7ba3ff;outline-offset:2px}.tabs,.modebar{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}.tab{border:1px solid var(--line);background:white;color:var(--muted);padding:10px 15px;border-radius:12px;font-weight:750}.tab.active{background:var(--blue);color:#fff;border-color:var(--blue)}.layout{display:grid;grid-template-columns:minmax(285px,370px) minmax(0,1fr);gap:18px;align-items:start}.panel{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:var(--shadow);min-width:0}.panel h2{font-size:18px;margin:0 0 14px}.panel h3{font-size:15px;margin:18px 0 10px}.muted{color:var(--muted);font-size:12px}.inputs{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field{min-width:0}.field.full{grid-column:1/-1}.field label{display:block;font-size:12px;color:var(--muted);font-weight:750;margin:0 0 5px}.field input,.field select{width:100%;min-width:0;border:1px solid var(--line);border-radius:10px;background:#fff;padding:10px 9px;color:var(--ink)}.field .hint{font-size:11px;color:var(--muted);margin-top:4px}.section{padding-top:14px;margin-top:14px;border-top:1px solid var(--line)}.hidden{display:none!important}.result-top{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.metric{border:1px solid var(--line);border-radius:14px;padding:14px;min-width:0}.metric .label{font-size:12px;color:var(--muted);font-weight:700}.metric .value{font-size:clamp(21px,3vw,30px);font-weight:850;letter-spacing:-.04em;margin:5px 0;overflow-wrap:anywhere}.metric .sub{font-size:12px;color:var(--muted)}.status{padding:14px;border-radius:14px;margin-bottom:12px;font-weight:800}.status.good{background:#e8f7f0;color:#086747}.status.bad{background:#fff0ed;color:#a92e23}.status.neutral{background:#eef3fb;color:#24446d}.chart-wrap{height:300px;position:relative;width:100%;margin-top:6px}canvas{width:100%;height:100%;display:block}.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted)}.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px}.compare{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.scenario-card{border:1px solid var(--line);border-radius:13px;padding:12px;min-width:0}.scenario-card h3{margin:0 0 8px;font-size:14px}.scenario-card .big{font-weight:850;font-size:20px}.scenario-card p{font-size:12px;color:var(--muted);margin:5px 0 0}.table-wrap{overflow:visible}table{border-collapse:collapse;width:100%;font-size:12px}th,td{padding:8px 6px;border-bottom:1px solid var(--line);text-align:right}th{color:var(--muted);font-weight:750;background:#f8faff}th:first-child,td:first-child{text-align:left}details summary{cursor:pointer;font-weight:800;padding:8px 0}details{border-top:1px solid var(--line);margin-top:14px}.event-row{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:6px;margin:8px 0}.event-row input{width:100%;min-width:0;padding:8px;border:1px solid var(--line);border-radius:8px}.small-btn{border:1px solid var(--line);border-radius:8px;background:#fff;padding:6px 9px}.note{font-size:12px;color:var(--muted);line-height:1.7}.foot{font-size:11px;color:var(--muted);margin:18px 0 4px}.pill{display:inline-block;border-radius:999px;background:var(--blue2);color:var(--blue);padding:3px 8px;font-size:11px;font-weight:800}.reverse-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.reverse-card{border:1px solid var(--line);border-radius:12px;padding:12px}.reverse-card label{display:block;font-size:12px;color:var(--muted);font-weight:750;margin-bottom:5px}.reverse-card .ans{font-size:22px;font-weight:850;margin-top:8px}.wide{grid-column:1/-1}.mobile-table-note{display:none}
 
-        .card { background: var(--card-bg); border-radius: 12px; padding: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 15px; }
-        .row { margin-bottom: 14px; }
-        .row:last-child { margin-bottom: 0; }
-        
-        .lbl-wp { display: flex; justify-content: space-between; align-items: center; font-weight: bold; font-size: 0.85rem; margin-bottom: 4px; }
-        .input-num-wp { display: flex; align-items: center; gap: 4px; }
-        .num-input { width: 75px; padding: 2px 6px; font-size: 0.85rem; border: 1px solid var(--border); border-radius: 4px; text-align: right; font-weight: bold; color: var(--primary); }
-        .unit { font-size: 0.8rem; color: var(--text-sub); }
-        
-        input[type="range"] { width: 100%; height: 6px; background: var(--border); border-radius: 3px; outline: none; -webkit-appearance: none; }
-        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%; background: var(--primary); cursor: pointer; transition: transform 0.1s; }
-        input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.1); }
-        
-        .btn-group { display: flex; gap: 10px; margin-bottom: 15px; }
-        .btn { flex: 1; color: #fff; border: none; padding: 12px; font-size: 0.9rem; font-weight: bold; border-radius: 8px; cursor: pointer; transition: background 0.2s; }
-        .btn-primary { background: var(--primary); } .btn-primary:hover { background: var(--primary-hover); }
-        .btn-success { background: var(--success); } .btn-success:hover { background: #059669; }
-        
-        .alert-box { border-radius: 10px; padding: 12px; text-align: center; font-weight: bold; display: none; margin-bottom: 15px; }
-        .alert-info { background: #eff6ff; border: 2px solid #bfdbfe; color: #1e40af; }
-        .alert-warn { background: #fef2f2; border: 2px solid #fecaca; color: #991b1b; }
+@media(max-width:900px){.wrap{padding:12px}.layout{grid-template-columns:1fr}.panel{padding:15px}.hero{padding:20px}.compare{grid-template-columns:1fr}.scenario-card{display:grid;grid-template-columns:1fr auto;gap:4px 10px}.scenario-card p{grid-column:1/-1}.chart-wrap{height:260px}.mobile-table-note{display:block}.table-wrap table,.table-wrap tbody,.table-wrap tr,.table-wrap td{display:block;width:100%}.table-wrap thead{display:none}.table-wrap tr{border:1px solid var(--line);border-radius:10px;margin:8px 0;padding:7px;background:#fff}.table-wrap td{display:flex;justify-content:space-between;text-align:right;border:0;padding:5px 3px;gap:12px}.table-wrap td:first-child{text-align:right;font-weight:800}.table-wrap td::before{content:attr(data-label);color:var(--muted);font-weight:650;text-align:left}.event-row{grid-template-columns:1fr 1fr}.event-row input:first-child{grid-column:1/-1}.event-row button{align-self:center}.result-top{grid-template-columns:1fr 1fr}}
 
-        .table-container { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; max-height: 450px; }
-        table { width: 100%; border-collapse: collapse; text-align: right; font-size: 0.8rem; white-space: nowrap; }
-        th, td { padding: 8px 10px; border-bottom: 1px solid var(--border); } 
-        th { background: #f8fafc; color: var(--text-sub); position: sticky; top: 0; z-index: 10; }
-        
-        .tab-wp { display: flex; border-bottom: 2px solid var(--border); margin-bottom: 15px; }
-        .tab-btn { flex: 1; padding: 10px; background: none; border: none; font-size: 0.95rem; font-weight: bold; color: var(--text-sub); cursor: pointer; text-align: center; }
-        .tab-btn.active { color: var(--primary); border-bottom: 2px solid var(--primary); margin-bottom: -2px; }
-        .tab-content { display: none; } .tab-content.active { display: block; }
-        
-        .qa-item { border-bottom: 1px solid var(--border); padding: 10px 0; }
-        .qa-q { font-weight: bold; color: var(--primary); cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
-        .qa-q::after { content: '▼'; font-size: 0.7rem; color: var(--text-sub); transition: transform 0.2s; }
-        .qa-item.open .qa-q::after { transform: rotate(180deg); }
-        .qa-a { display: none; padding-top: 8px; color: var(--text-sub); line-height: 1.5; white-space: pre-wrap; }
-        .qa-item.open .qa-a { display: block; }
-        
-        .help-text { font-size: 0.75rem; color: var(--text-sub); margin-top: 2px; }
-    </style>
+@media(max-width:430px){.inputs{grid-template-columns:1fr 1fr;gap:9px}.field input,.field select{padding:9px 7px;font-size:14px}.result-top{grid-template-columns:1fr 1fr}.metric{padding:11px}.metric .value{font-size:21px}.reverse-grid{grid-template-columns:1fr}.wide{grid-column:auto}.top-actions .btn{flex:1}.hero h1{font-size:26px}}
+</style>
 </head>
 <body>
-<div class="container">
-    <h1>🔥 次世代本格 FIREシミュレーター</h1>
-    
-    <div class="summary-grid">
-        <div class="summary-card" id="card-lifespan">
-            <div class="summary-title" id="lbl-lifespan">目標寿命までの状態</div>
-            <div class="summary-value" id="sum-lifespan">---</div>
+<div class="wrap">
+<header class="hero">
+    <span class="pill">PLAN YOUR FREEDOM</span>
+    <h1>FIREシミュレーター</h1>
+    <p>資産・働き方・住まいを変えながら、未来の選択肢を試算。結果は予測ではなく、入力条件に基づくシミュレーションです。</p>
+    <div class="top-actions">
+        <button class="btn ghost" id="resetBtn">初期設定に戻す</button>
+        <button class="btn ghost" id="modeBtn">詳細設定を表示</button>
+    </div>
+</header>
+
+<div class="tabs" role="tablist" aria-label="運用シナリオ">
+    <button class="tab active" data-scenario="basic">基本</button>
+    <button class="tab" data-scenario="crash">暴落</button>
+    <button class="tab" data-scenario="low">低迷</button>
+</div>
+
+<div class="layout">
+<aside class="panel">
+    <h2>シミュレーション条件</h2>
+    <p class="muted">数値を変更すると結果を自動更新します。金額は万円単位です。</p>
+
+    <div class="inputs">
+        <div class="field"><label for="startAge">現在の年齢</label><input id="startAge" type="number" min="18" max="100" value="40"></div>
+        <div class="field"><label for="targetAge">目標寿命</label><input id="targetAge" type="number" min="50" max="120" value="90"></div>
+        <div class="field"><label for="cash">現金・預金（万円）</label><input id="cash" type="number" min="0" step="10" value="500"></div>
+        <div class="field"><label for="nisaInvest">NISA資産残高（万円）</label><input id="nisaInvest" type="number" min="0" step="10" value="300"></div>
+        <div class="field"><label for="taxableInvest">課税口座資産（万円）</label><input id="taxableInvest" type="number" min="0" step="10" value="200"></div>
+        <div class="field"><label for="reserve">目標残存資産（万円）</label><input id="reserve" type="number" min="0" step="10" value="0"></div>
+        <div class="field"><label for="ret">投資リターン（年率%）</label><input id="ret" type="number" min="0" max="15" step="0.1" value="4"></div>
+        <div class="field"><label for="inflation">インフレ率（年率%）</label><input id="inflation" type="number" min="0" max="10" step="0.1" value="2"></div>
+        <div class="field"><label for="salary">FIRE前の額面年収（万円）</label><input id="salary" type="number" min="0" step="10" value="500"></div>
+        <div class="field"><label for="preSpend">FIRE前の生活費（万円/年）</label><input id="preSpend" type="number" min="0" step="10" value="400"></div>
+        <div class="field"><label for="postSpend">FIRE後の生活費（万円/年）</label><input id="postSpend" type="number" min="0" step="10" value="400"></div>
+    </div>
+
+    <div class="section">
+        <h3>シナリオ設定</h3>
+        <div class="inputs">
+            <div class="field" id="crashField"><label for="crashPct">開始時の暴落率（%）</label><input id="crashPct" type="number" min="0" max="100" step="1" value="30"></div>
+            <div class="field"><label for="lowYears">低迷期間（年）</label><input id="lowYears" type="number" value="5" disabled></div>
         </div>
-        <div class="summary-card" id="card-reverse">
-            <div class="summary-title">逆算の推奨リタイア年齢</div>
-            <div class="summary-value" id="sum-reverse">未実行 (ボタン押下)</div>
+        <p class="muted">低迷シナリオは最初の5年間を年0%とし、その後は設定利回りに戻ります。</p>
+    </div>
+
+    <div class="section detailed hidden" id="detailSection">
+        <h3>収入・年金・退職金</h3>
+        <div class="inputs">
+            <div class="field"><label for="workIncome">FIRE後の年収（万円）</label><input id="workIncome" type="number" min="0" step="10" value="0"></div>
+            <div class="field"><label for="workStart">FIRE後の収入開始年齢</label><input id="workStart" type="number" min="18" max="120" value="40"></div>
+            <div class="field"><label for="workEnd">FIRE後の収入終了年齢</label><input id="workEnd" type="number" min="18" max="120" value="65"></div>
+            <div class="field"><label for="pension">年金見込額（万円/年）</label><input id="pension" type="number" min="0" step="10" value="150"></div>
+            <div class="field"><label for="pensionAge">年金受給開始年齢</label><input id="pensionAge" type="number" min="60" max="75" value="65"></div>
+            <div class="field"><label for="dc">iDeCo・DC資産（万円）</label><input id="dc" type="number" min="0" step="10" value="300"></div>
+            <div class="field"><label for="dcAge">DC受取開始年齢</label><input id="dcAge" type="number" min="50" max="75" value="60"></div>
+            <div class="field"><label for="dcMethod">DC受取方法</label><select id="dcMethod"><option value="lump">一時金</option><option value="annuity">年金形式（20年想定）</option></select></div>
+            <div class="field"><label for="retirementPay">退職金（万円）</label><input id="retirementPay" type="number" min="0" step="10" value="0"></div>
+            <div class="field"><label for="retirementAge">退職金受取年齢</label><input id="retirementAge" type="number" min="18" max="100" value="60"></div>
         </div>
-        <div class="summary-card">
-            <div class="summary-title" id="lbl-target-asset">90歳時点の総資産</div>
-            <div class="summary-value" id="sum-target-asset">---</div>
+
+        <h3>住まい</h3>
+        <div class="inputs">
+            <div class="field"><label for="housing">住居タイプ</label><select id="housing"><option value="rent">賃貸</option><option value="buy">住宅購入</option></select></div>
+            <div class="field"><label for="rent">家賃（月額・万円）</label><input id="rent" type="number" min="0" step="1" value="15"></div>
+            <div class="field"><label for="buyAge">住宅購入年齢</label><input id="buyAge" type="number" min="18" max="100" value="40"></div>
+            <div class="field"><label for="homePrice">住宅価格（万円）</label><input id="homePrice" type="number" min="0" step="100" value="5000"></div>
+            <div class="field"><label for="downPayment">頭金（万円）</label><input id="downPayment" type="number" min="0" step="100" value="500"></div>
+            <div class="field"><label for="closingPct">諸費用（価格比%）</label><input id="closingPct" type="number" min="0" max="20" step="0.5" value="5"></div>
+            <div class="field"><label for="calculatedLoanDisplay">住宅ローン借入額（自動算出）</label><input id="calculatedLoanDisplay" type="text" value="4,500万円" disabled style="background:#f1f5f9; font-weight:bold;"></div>
+            <div class="field"><label for="loanYears">住宅ローン期間（年）</label><input id="loanYears" type="number" min="0" max="50" value="35"></div>
+            <div class="field"><label for="loanRate">住宅ローン金利（%）</label><input id="loanRate" type="number" min="0" max="10" step="0.1" value="1.5"></div>
+            <div class="field"><label for="propertyTax">固定資産税（年額・万円）</label><input id="propertyTax" type="number" min="0" step="5" value="20"></div>
+            <div class="field"><label for="maintenance">修繕・維持費（年額・万円）</label><input id="maintenance" type="number" min="0" step="5" value="20"></div>
         </div>
-        <div class="summary-card">
-            <div class="summary-title">100歳時点の総資産</div>
-            <div class="summary-value" id="sum-100">---</div>
+
+        <h3>税・NISAなど</h3>
+        <div class="inputs">
+            <div class="field"><label for="annualNisa">NISA年間投資上限（万円）</label><input id="annualNisa" type="number" min="0" max="360" value="360"></div>
+            <div class="field"><label for="nisaUsed">NISA生涯投資枠使用額（万円）</label><input id="nisaUsed" type="number" min="0" max="1800" value="300"></div>
+            <div class="field"><label for="gainRatio">課税口座の含み益比率（%）</label><input id="gainRatio" type="number" min="0" max="100" value="20"></div>
+        </div>
+
+        <h3>一時的な支出</h3>
+        <div id="events"></div>
+        <button type="button" class="small-btn" id="addEvent">＋ 支出イベントを追加</button>
+    </div>
+
+    <div class="section">
+        <p class="note">
+            ※現金は運用せず、投資資産は設定利回りで複利運用します。<br>
+            ※税・社会保険料は概算値です（実際の法律や個人の状況により異なります）。<br>
+            ※【名目モデルの採用】本シミュレーターは、名目リターン（投資リターン）で資産を増やしつつ、生活費や家賃などをインフレ率で毎年上昇させる「名目ベース」で計算を行っています。<br>
+            ※住宅購入時は「住宅価格 − 頭金」でローン借入額を自動算出します。諸費用（諸費用率%）は購入年の支出として計上されます。
+        </p>
+    </div>
+</aside>
+
+<main class="panel">
+    <h2>シミュレーション結果</h2>
+    <div id="status" class="status neutral">計算中…</div>
+
+    <div class="result-top">
+        <div class="metric"><div class="label">目標寿命時の利用可能資産</div><div class="value" id="targetAssets">—</div><div class="sub" id="targetSub"></div></div>
+        <div class="metric"><div class="label">資金枯渇年齢</div><div class="value" id="depletion">—</div><div class="sub">資金ショートの初年度</div></div>
+        <div class="metric"><div class="label">最短FIRE可能年齢</div><div class="value" id="fireAgeResult">—</div><div class="sub">選択中シナリオで逆算</div></div>
+        <div class="metric"><div class="label">判定</div><div class="value" id="verdict">—</div><div class="sub" id="verdictSub"></div></div>
+    </div>
+
+    <div class="section">
+        <h3>資産推移</h3>
+        <div class="chart-wrap"><canvas id="chart" aria-label="年齢別資産推移グラフ"></canvas></div>
+        <div class="legend"><span><i class="dot" style="background:#2459d3"></i>利用可能資産</span><span><i class="dot" style="background:#0b9a77"></i>総資産（DC含む）</span><span><i class="dot" style="background:#e58b36"></i>現金</span></div>
+    </div>
+
+    <div class="section">
+        <h3>3シナリオ比較</h3>
+        <div id="compare" class="compare"></div>
+    </div>
+
+    <div class="section">
+        <h3>逆算ツール</h3>
+        <div class="reverse-grid">
+            <div class="reverse-card"><label>目標寿命を達成できる最短FIRE年齢</label><div class="ans" id="reverseAge">—</div></div>
+            <div class="reverse-card"><label for="reverseEnd">収入を得る終了年齢</label><input id="reverseEnd" type="number" min="18" max="100" value="65"><div class="ans" id="reverseIncome">—</div><div class="muted">必要なFIRE後年収（万円/年）</div></div>
+            <div class="reverse-card wide"><label>許容できるFIRE後の生活費</label><div class="ans" id="reverseSpend">—</div><div class="muted">目標寿命まで持つ年間生活費（万円/年）</div></div>
         </div>
     </div>
 
-    <div class="tab-wp">
-        <button class="tab-btn active" onclick="switchTab('sim-tab', event)">シミュレーター</button>
-        <button class="tab-btn" onclick="switchTab('qa-tab', event)">計算ロジックQA</button>
-    </div>
-
-    <div id="sim-tab" class="tab-content active">
-        <div class="card">
-            <div style="font-weight:bold; margin-bottom:8px; color:var(--text-sub);">▼ 住居区分の選択</div>
-            <div style="display:flex; gap:15px; font-weight:bold;">
-                <label><input type="radio" name="hType" value="loan" checked style="width:auto; -webkit-appearance:auto;"> ローンあり</label>
-                <label><input type="radio" name="hType" value="rent" style="width:auto; -webkit-appearance:auto;"> 賃貸・その他</label>
-            </div>
-        </div>
-
-        <div class="card" id="inputs-container"></div>
-
-        <div class="btn-group">
-            <button id="calcBtn" class="btn btn-primary">結果を再計算する</button>
-            <button id="backBtn" class="btn btn-success">目標寿命に合わせた年齢を逆算</button>
-        </div>
-
-        <div id="gRes" class="alert-box"></div>
-
-        <div class="card">
-            <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th style="text-align:center;">年齢</th>
-                            <th>総資産</th>
-                            <th>運用資産</th>
-                            <th>現金・iDeCo</th>
-                            <th>年間生活費</th>
-                            <th style="color:var(--danger);">年間税金</th>
-                            <th>状態</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tb"></tbody>
-                </table>
-            </div>
+    <div class="section">
+        <h3>年齢別シミュレーション</h3>
+        <p class="muted mobile-table-note">スマートフォンでは各年齢をカード形式で表示します。</p>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>年齢</th><th>給与等</th><th>年金・DC</th><th>生活費</th><th>住宅費</th><th>税・社保</th><th>売却額</th><th>現金</th><th>投資資産</th><th>DC等</th><th>利用可能資産／不足額</th></tr></thead>
+                <tbody id="yearRows"></tbody>
+            </table>
         </div>
     </div>
 
-    <div id="qa-tab" class="tab-content">
-        <div class="card" id="qa-list"></div>
-    </div>
+    <details>
+        <summary>計算上の前提・注意点</summary>
+        <div class="note">
+            ・金額は万円単位です。<br>
+            ・運用利回りは毎年一定と仮定しています。実際の相場変動、税制変更、手数料は反映されません。<br>
+            ・税・社会保険料は簡易的な概算値です。<br>
+            ・住宅価格の将来価値は金融資産に含めません。<br>
+            ・年金・DCの税金は概算です。<br>
+            ・NISA枠の復活（売却による枠の再利用）は保守的な観点から考慮していません（一度売却した枠は復活しない前提）。
+        </div>
+    </details>
+
+    <div class="foot">FIREシミュレーター — 条件を変えて複数の未来を比較するための試算ツール</div>
+</main>
+</div>
 </div>
 
 <script>
-const CONFIG = [
-    {id:'cA', name:'現在の年齢', min:20, max:65, val:40, u:'歳', help:'シミュレーションを開始する年齢'},
-    {id:'tLife', name:'目標寿命', min:70, max:100, step:1, val:90, u:'歳', help:'資産を枯渇させずに生き抜きたい目標の年齢'},
-    {id:'rA', name:'リタイア年齢', min:25, max:70, val:60, u:'歳', help:'労働を完全に辞めてFIRE生活に入る年齢'},
-    {id:'inc', name:'現在の年収 (額面)', min:200, max:2000, step:50, val:700, m:true, help:'現役時代の税引前年収（万円）'},
-    {id:'ivA', name:'運用資産 (現時点)', min:0, max:20000, step:100, val:1000, m:true, help:'株・投資信託などの時価総額（万円）'},
-    {id:'csA', name:'現金保有 (現時点)', min:0, max:10000, step:100, val:1000, m:true, help:'預貯金などの手元資金（万円）'},
-    {id:'idc', name:'現在のiDeCo残高', min:0, max:3000, step:50, val:300, m:true, help:'60歳までロックされる積立金（万円）'},
-    {id:'yld', name:'運用利回り (実質)', min:0, max:15, step:0.1, val:4.0, p:true, help:'インフレ調整後の期待運用リターン（%）'},
-    {id:'inf', name:'インフレ率', min:0, max:10, step:0.1, val:2.0, p:true, help:'物価上昇による生活費・家賃への影響（%）'},
-    {id:'cB6', name:'60歳前の年間生活費 (住居除く)', min:100, max:1000, step:10, val:500, m:true, help:'住居費を除いた年間ベース支出（万円）'},
-    {id:'cA6', name:'60歳以降の年間生活費 (住居除く)', min:100, max:1000, step:10, val:400, m:true, help:'リタイア後・高齢期の生活費（万円）'},
-    {id:'lBal', name:'住宅ローン残高', min:0, max:8000, step:100, val:3000, m:true, g:'loan', help:'現在の住宅ローン借入残高（万円）'},
-    {id:'lPay', name:'住宅ローンの年間返済額', min:0, max:400, step:5, val:120, m:true, g:'loan', help:'年間で返済する総額（万円）'},
-    {id:'lRat', name:'住宅ローン金利', min:0, max:5, step:0.05, val:0.5, p:true, g:'loan', help:'ローン適用金利（%）'},
-    {id:'rMon', name:'家賃月額', min:0, max:40, step:1, val:10, m:true, g:'rent', help:'毎月の賃料（万円）'},
-    {id:'pen', name:'受給年金 (年額)', min:0, max:400, step:10, val:150, m:true, help:'65歳基準の受給額（万円）'},
-    {id:'pA', name:'年金受給開始年齢', min:60, max:75, val:65, u:'歳', help:'繰り上げ・繰り下げを反映'}
-];
+(function(){
+'use strict';
 
-const QAS = [
-    {q:"Q1. 現在の設定と逆算結果の違いは？", a:"「リタイア年齢」はご自身で設定した現在の検証値です。「逆算の推奨リタイア年齢」は目標寿命までに破綻しないために必要な最短の年齢を示します。"},
-    {q:"Q2. 目標寿命以降の資産はどうなる？", a:"目標寿命（例: 90歳）でクリアしていても、100歳に向けて資産を使い切る場合は100歳時点で0円に近づくことがあります。"}
-];
+const $ = id => document.getElementById(id);
+const STORAGE = 'fireSimulatorSpecV9';
+let scenario = 'basic', detailed = false, events = [], lastResults = {};
 
-const inpCont = document.getElementById('inputs-container');
-CONFIG.forEach(c => {
-    inpCont.innerHTML += `
-        <div class="row" id="row_${c.id}">
-            <div class="lbl-wp">
-                <label for="${c.id}">${c.name}</label>
-                <div class="input-num-wp">
-                    <input type="number" id="${c.id}_num" class="num-input" min="${c.min}" max="${c.max}" step="${c.step||1}" value="${c.val}">
-                    <span class="unit" id="${c.id}_unit">${c.m ? '万円' : c.p ? '%' : c.u}</span>
-                </div>
-            </div>
-            <input type="range" id="${c.id}" min="${c.min}" max="${c.max}" step="${c.step||1}" value="${c.val}">
-            ${c.help ? `<div class="help-text">${c.help}</div>` : ''}
-        </div>`;
-});
+const DEFAULTS = {
+    startAge: 40, targetAge: 90, cash: 500, nisaInvest: 300, taxableInvest: 200, reserve: 0, 
+    ret: 4, inflation: 2, salary: 500, preSpend: 400, postSpend: 400, 
+    crashPct: 30, workIncome: 0, workStart: 40, workEnd: 65, 
+    pension: 150, pensionAge: 65, dc: 300, dcAge: 60, dcMethod: 'lump', 
+    retirementPay: 0, retirementAge: 60, housing: 'rent', rent: 15, 
+    rentInflation: 2, buyAge: 40, homePrice: 5000, downPayment: 500, closingPct: 5, 
+    loanYears: 35, loanRate: 1.5, propertyTax: 20, maintenance: 20, 
+    annualNisa: 360, nisaUsed: 300, gainRatio: 20, reverseEnd: 65
+};
 
-const qaCont = document.getElementById('qa-list');
-QAS.forEach(qa => { qaCont.innerHTML += `<div class="qa-item"><div class="qa-q" onclick="toggleQA(this)">${qa.q}</div><div class="qa-a">${qa.a}</div></div>`; });
+// 数値入力の安全な読み取り
+function readNumber(id, fallback, min = 0, max = 100000000) {
+  const el = document.getElementById(id);
+  if (!el) return fallback;
 
-const el = {}, numEl = {};
-CONFIG.forEach(c => {
-    el[c.id] = document.getElementById(c.id);
-    numEl[c.id] = document.getElementById(c.id + '_num');
-});
+  const value = el.value.trim();
+  if (value === "") return fallback;
 
-CONFIG.forEach(c => {
-    el[c.id].addEventListener('input', () => { 
-        numEl[c.id].value = el[c.id].value; 
-        triggerCalc(); 
-    });
-    numEl[c.id].addEventListener('input', () => { 
-        let v = parseFloat(numEl[c.id].value);
-        if(!isNaN(v)) {
-            if(v < c.min) v = c.min;
-            if(v > c.max) v = c.max;
-            el[c.id].value = v;
-            triggerCalc(); 
-        }
-    });
-});
+  const number = Number(value);
+  if (!Number.isFinite(number)) return fallback;
 
-function toggleHousing() {
-    const type = document.querySelector('input[name="hType"]:checked').value;
-    CONFIG.forEach(c => { if (c.g) document.getElementById('row_' + c.id).style.display = (c.g === type) ? 'block' : 'none'; });
+  return Math.min(max, Math.max(min, number));
 }
 
-function switchTab(tabId, event) {
-    document.querySelectorAll('.tab-content').forEach(e => e.classList.remove('active'));
-    document.querySelectorAll('.tab-btn').forEach(e => e.classList.remove('active'));
-    document.getElementById(tabId).classList.add('active');
-    if (event && event.currentTarget) {
-        event.currentTarget.classList.add('active');
-    }
+// 年齢条件の検証
+function validateAgeRange(startAge, targetAge) {
+  if (startAge < 18 || startAge > 100) {
+    return "現在の年齢は18〜100歳で設定してください。";
+  }
+  if (targetAge < 50 || targetAge > 120) {
+    return "目標寿命は50〜120歳で設定してください。";
+  }
+  if (targetAge <= startAge) {
+    return "目標寿命は現在の年齢より上に設定してください。";
+  }
+  return null;
 }
 
-function toggleQA(e) { e.parentElement.classList.toggle('open'); }
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const fmt = v => Number.isFinite(v) ? Math.round(v).toLocaleString('ja-JP') + '万円' : '—';
+const fmtAge = v => v == null ? 'なし' : v + '歳';
 
-function fmt(n) {
-    if (n <= 0) return "0万円";
-    if (n >= 10000) { 
-        const o = Math.floor(n / 10000), r = Math.round(n % 10000); 
-        return r > 0 ? `${o}億${r.toLocaleString()}万円` : `${o}億円`; 
-    }
-    return `${Math.round(n).toLocaleString()}万円`;
-}
-
-function runCoreEngine(params) {
-    const { cA, rA, inc, ivA, csA, idcStart, yld, inf, cB6, cA6, hType, lBal, lPay, lRat, rMon, pen, pA } = params;
-    
-    let inv = ivA;
-    let cash = csA;
-    let idc = idcStart;
-    let currLoan = lBal;
-    
-    let pR = 1.0;
-    if(pA < 65) pR -= (65 - pA) * 12 * 0.004;
-    else if(pA > 65) pR += (pA - 65) * 12 * 0.007;
-    const pension = pen * Math.max(0.5, pR);
-    
-    let results = [];
-    let bankruptedAge = 0;
-    let isAlreadyBankrupt = false;
-
-    for (let a = cA; a <= 100; a++) {
-        let taxIncurred = 0;
-        
-        if (a === 60) {
-            cash += idc;
-            idc = 0;
-        }
-        
-        let yearsPassed = a - cA;
-        let baseCost = ((a < 60) ? cB6 : cA6) * Math.pow(1 + inf, yearsPassed);
-        let hCost = 0;
-        if (hType === 'loan') {
-            if (currLoan > 0) {
-                let interest = currLoan * lRat;
-                let principalPaid = lPay - interest;
-                currLoan -= Math.max(0, principalPaid);
-                if (currLoan < 0) currLoan = 0;
-                hCost = lPay;
-            }
+function readInputs() {
+    const o = {};
+    for (const id in DEFAULTS) {
+        const el = $(id);
+        if (el && el.type === 'number') {
+            let min = 0, max = 100000000;
+            if (id === 'startAge') { min = 18; max = 100; }
+            else if (id === 'targetAge') { min = 50; max = 120; }
+            else if (id === 'ret') { min = 0; max = 15; }
+            else if (id === 'inflation') { min = 0; max = 10; }
+            else if (id === 'nisaUsed') { min = 0; max = 1800; }
+            else if (id === 'closingPct') { min = 0; max = 20; }
+            else if (id === 'loanRate') { min = 0; max = 10; }
+            o[id] = readNumber(id, DEFAULTS[id], min, max);
         } else {
-            hCost = (rMon * 12) * Math.pow(1 + inf, yearsPassed);
+            o[id] = el ? el.value : DEFAULTS[id];
         }
-        let totalCost = baseCost + hCost;
+    }
+    // 住宅ローンの自動計算（住宅価格 − 頭金）
+    const homePrice = Math.max(0, Number(o.homePrice) || 0);
+    const downPayment = Math.max(0, Number(o.downPayment) || 0);
+    o.loan = Math.max(0, homePrice - downPayment);
+
+    o.events = events.map(x => ({...x}));
+    o.scenario = scenario;
+    return o;
+}
+
+function save() {
+    try { localStorage.setItem(STORAGE, JSON.stringify({...readInputs(), detailed})); } catch(e) {}
+}
+
+function load() {
+    try {
+        const o = JSON.parse(localStorage.getItem(STORAGE) || 'null');
+        if (!o) return;
+        for (const id in DEFAULTS) {
+            if (o[id] !== undefined && $(id)) $(id).value = o[id];
+        }
+        if (Array.isArray(o.events)) events = o.events;
+        if (o.scenario) scenario = o.scenario;
+        detailed = !!o.detailed;
+    } catch(e) {}
+}
+
+function renderEvents() {
+    const root = $('events');
+    root.innerHTML = '';
+    events.forEach((ev, i) => {
+        const row = document.createElement('div');
+        row.className = 'event-row';
+        row.innerHTML = `
+            <input type="number" min="18" max="120" aria-label="${i+1}件目の年齢" value="${safe(ev.age)}" data-event="${i}" data-key="age" placeholder="年齢">
+            <input type="number" min="0" aria-label="${i+1}件目の金額（万円）" value="${safe(ev.amount)}" data-event="${i}" data-key="amount" placeholder="金額（万円）">
+            <input aria-label="${i+1}件目の名称" value="${safe(ev.name)}" data-event="${i}" data-key="name" placeholder="支出名">
+            <button type="button" class="small-btn" data-remove="${i}" aria-label="支出を削除">削除</button>
+        `;
+        root.appendChild(row);
+    });
+    root.querySelectorAll('[data-event]').forEach(el => el.addEventListener('change', () => {
+        const i = +el.dataset.event, k = el.dataset.key;
+        events[i][k] = k === 'name' ? el.value : Math.max(0, Number(el.value) || 0);
+        save(); recalculate();
+    }));
+    root.querySelectorAll('[data-remove]').forEach(el => el.addEventListener('click', () => {
+        events.splice(+el.dataset.remove, 1);
+        renderEvents(); save(); recalculate();
+    }));
+}
+
+function safe(s) {
+    return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+// 税・社会保険料の計算（概算）
+function incomeTax(salary) {
+    if (salary <= 0) return 0;
+    const social = Math.min(salary * .15, 150);
+    const employment = salary <= 162.5 ? 55 : salary <= 180 ? salary * .4 - 10 : salary <= 360 ? salary * .3 + 8 : salary <= 660 ? salary * .2 + 44 : salary <= 850 ? salary * .1 + 110 : 195;
+    const taxable = Math.max(0, salary - social - employment - 48);
+    let tax = taxable <= 195 ? taxable * .05 : taxable <= 330 ? taxable * .1 - 9.75 : taxable <= 695 ? taxable * .2 - 42.75 : taxable <= 900 ? taxable * .23 - 63.6 : taxable <= 1800 ? taxable * .33 - 153.6 : taxable * .4 - 279.6;
+    const resident = Math.max(0, taxable) * .1;
+    return Math.max(0, tax + resident + social);
+}
+
+function pensionFactor(age) {
+    const months = (age - 65) * 12;
+    if (months < 0) return Math.max(.76, 1 + months * .004);
+    if (months > 0) return Math.min(1.84, 1 + months * .007);
+    return 1;
+}
+
+function loanPayment(principal, rate, years) {
+    if (principal <= 0 || years <= 0) return 0;
+    const r = rate / 100;
+    return r === 0 ? principal / years : principal * (r * Math.pow(1 + r, years)) / (Math.pow(1 + r, years) - 1);
+}
+
+function taxOnSale(gross, ratio, rate = 0.20315) {
+    return gross * Math.max(0, ratio) * rate;
+}
+
+/**
+ * シミュレーションエンジン（厳正な計算ルール、破綻後不足額、住宅ローン自動算出対応）
+ */
+function simulate(o, opts = {}) {
+    const start = clamp(Math.round(o.startAge), 18, 100);
+    const target = clamp(Math.round(o.targetAge), start + 1, 120);
+    const fireAge = opts.fireAge ?? start;
+
+    let cash = Math.max(0, o.cash);
+    let nisaBalance = Math.max(0, o.nisaInvest);       
+    let taxableBalance = Math.max(0, o.taxableInvest); 
+    let nisaLifetimeUsed = clamp(o.nisaUsed, 0, 1800); 
+
+    let dc = Math.max(0, o.dc);
+    let dcPaid = false, retPayPaid = false, homeBought = false;
+    let loanBalance = 0, loanYearsLeft = 0, annualMortgage = 0;
+    
+    const rows = [];
+    let depletionAge = null, minimum = Infinity;
+    let isAlreadyBankrupt = false;
+    const returnRate = o.ret / 100, inf = o.inflation / 100;
+
+    for (let age = start; age <= target; age++) {
+        const year = age - start;
+        let salary = 0, work = 0, pension = 0, retirement = 0, dcIncome = 0, dcLump = 0;
+        let spend = 0, housing = 0, oneOff = 0, taxes = 0, sold = 0, saleTax = 0, contribution = 0;
+
+        const isWorking = age < fireAge;
+        if (isWorking) salary = Math.max(0, o.salary) * Math.pow(1 + inf, year);
+        else if (age >= o.workStart && age <= o.workEnd) work = Math.max(0, o.workIncome) * Math.pow(1 + inf, year);
+
+        if (age >= o.pensionAge) {
+            pension = Math.max(0, o.pension) * pensionFactor(o.pensionAge) * Math.pow(1 + inf, year);
+        }
+        if (age >= o.retirementAge && !retPayPaid && o.retirementPay > 0) {
+            retirement = Math.max(0, o.retirementPay);
+            retPayPaid = true;
+        }
+        if (age >= o.dcAge && !dcPaid && dc > 0 && o.dcMethod === 'lump') {
+            dcLump = dc; dcPaid = true; dc = 0;
+        }
+        if (age >= o.dcAge && o.dcMethod === 'annuity' && dc > 0) {
+            dcIncome = Math.min(dc / Math.max(1, Math.min(20, target - age + 1)), dc / 20);
+            dc -= dcIncome;
+            if (dc < .01) dc = 0;
+        }
+
+        const baseSpend = (isWorking ? o.preSpend : o.postSpend) * Math.pow(1 + inf, year);
+        spend = Math.max(0, baseSpend);
+
+        if (o.housing === 'rent') {
+            housing = Math.max(0, o.rent) * 12 * Math.pow(1 + o.rentInflation / 100, year);
+        } else {
+            if (!homeBought && age >= o.buyAge) {
+                // 住宅頭金と諸費用（諸費用率%）をワンオフ支出として計算
+                const homePrice = Math.max(0, Number(o.homePrice) || 0);
+                const downPayment = Math.max(0, Number(o.downPayment) || 0);
+                const closingFee = homePrice * Math.max(0, Number(o.closingPct) || 0) / 100;
+                
+                oneOff += (downPayment + closingFee);
+                homeBought = true;
+
+                // ローン借入額＝住宅価格 − 頭金
+                loanBalance = Math.max(0, homePrice - downPayment);
+                loanYearsLeft = Math.max(0, Math.round(o.loanYears));
+                annualMortgage = loanPayment(loanBalance, o.loanRate, loanYearsLeft);
+            }
+            if (homeBought) {
+                if (loanYearsLeft > 0 && loanBalance > 0) {
+                    housing += annualMortgage;
+                    const interest = loanBalance * o.loanRate / 100;
+                    loanBalance = Math.max(0, loanBalance - (annualMortgage - interest));
+                    loanYearsLeft--;
+                    if (loanYearsLeft <= 0) loanBalance = 0;
+                }
+                housing += (Math.max(0, o.propertyTax) + Math.max(0, o.maintenance)) * Math.pow(1 + inf, year);
+            }
+        }
+
+        // 安全な支出イベントの参照
+        const activeEvents = Array.isArray(o.events) ? o.events : events;
+        activeEvents.forEach(e => {
+            if (Math.round(Number(e.age)) === age) {
+                oneOff += Math.max(0, Number(e.amount) || 0) * Math.pow(1 + inf, year);
+            }
+        });
+
+        // 税・社会保険料（概算）
+        const grossSalary = salary + work;
+        const salaryTax = incomeTax(grossSalary);
+        const pensionTax = pension * .08;
+        const otherIncomeTax = dcIncome * .08;
+        const retirementTax = retirement > 0 ? Math.max(0, retirement - Math.max(400, Math.min(800, 40 * Math.max(0, age - o.startAge)))) * .1 : 0;
+        const dcTax = dcLump > 0 ? Math.max(0, dcLump - 800) * .1 : 0;
         
+        let baseTaxes = salaryTax + pensionTax + otherIncomeTax + retirementTax + dcTax;
+        let income = salary + work + pension + retirement + dcIncome + dcLump;
+
+        // 破綻後の正確な不足額の計算と記録
         if (isAlreadyBankrupt) {
-            results.push({ a, tot: 0, inv: 0, cashAndIdc: 0, totalCost, taxIncurred: 0, isBankrupt: true });
+            const totalExpenses = spend + housing + oneOff + baseTaxes;
+            const shortfall = Math.max(0, totalExpenses - income);
+
+            rows.push({
+                age,
+                salary: salary + work,
+                pension: pension + dcIncome + dcLump,
+                retirement,
+                spend,
+                housing,
+                taxes: baseTaxes,
+                sold: 0,
+                cash: 0,
+                investment: 0,
+                nisa: 0,
+                taxable: 0,
+                dc,
+                available: 0,
+                wealth: dc,
+                shortfall,
+                contribution: 0,
+                oneOff,
+                cashTarget: 0,
+                income,
+                isBankrupt: true
+            });
             continue;
         }
-        
-        if (a < rA) {
-            let tax = inc * 0.2;
-            taxIncurred = tax;
-            let netIncome = inc - tax;
-            let netCashFlow = netIncome - totalCost;
+
+        // 暴落処理（FIRE開始年齢に適用：年初下落モデル）
+        if (age === fireAge && opts.scenario === 'crash') {
+            const loss = clamp(o.crashPct, 0, 100) / 100;
+            nisaBalance *= 1 - loss;
+            taxableBalance *= 1 - loss;
+        }
+
+        // 資産運用（名目リターンを適用）
+        let r = returnRate;
+        if (opts.scenario === 'low' && age >= fireAge && age < fireAge + 5) r = 0;
+        nisaBalance *= 1 + r;
+        taxableBalance *= 1 + r;
+        dc *= 1 + r;
+
+        // 収支順序処理
+        cash += income;
+        const totalSpendAndTax = spend + housing + oneOff + baseTaxes;
+        cash -= totalSpendAndTax;
+
+        const cashTarget = Math.max(0, totalSpendAndTax);
+        if (isWorking && cash > cashTarget) {
+            let surplus = cash - cashTarget;
+            cash = cashTarget; 
             
-            if (netCashFlow >= 0) {
-                inv = (inv + netCashFlow) * (1 + yld);
-            } else {
-                cash += netCashFlow;
-                inv = inv * (1 + yld);
+            const annualCap = Math.max(0, o.annualNisa);
+            const lifetimeRoom = Math.max(0, 1800 - nisaLifetimeUsed);
+            const nisaRoom = Math.min(lifetimeRoom, annualCap);
+            const addNisa = Math.min(surplus, nisaRoom);
+            
+            nisaBalance += addNisa;
+            nisaLifetimeUsed += addNisa; 
+            surplus -= addNisa;
+            
+            taxableBalance += surplus;
+            contribution = addNisa + surplus;
+        }
+
+        let shortfallAmount = 0;
+        if (cash < 0) {
+            let deficit = -cash; 
+            const taxableGain = clamp(o.gainRatio / 100, 0, 1);
+
+            if (taxableBalance > 0 && deficit > 0) {
+                const netRate = 1 - taxableGain * 0.20315;
+                const grossTaxableNeeded = deficit / Math.max(0.01, netRate);
+                const grossToSell = Math.min(taxableBalance, grossTaxableNeeded);
+                const tax = taxOnSale(grossToSell, taxableGain);
+                const netProceeds = grossToSell - tax;
+
+                taxableBalance -= grossToSell;
+                sold += grossToSell;
+                saleTax += tax;
+                cash += netProceeds;
+                deficit = Math.max(0, -cash);
             }
-            if (a < 60) idc *= (1 + yld);
-        } else {
-            if (a >= pA) cash += pension;
-            
-            inv *= (1 + yld);
-            if (a < 60) idc *= (1 + yld);
-            
-            let needed = totalCost;
-            let totalCashAvailable = cash + idc;
-            
-            if (totalCashAvailable >= needed) {
-                cash -= needed;
-                if (cash < 0) {
-                    idc += cash;
-                    cash = 0;
-                    if (idc < 0) idc = 0;
-                }
-            } else {
-                let deficit = needed - totalCashAvailable;
+
+            if (nisaBalance > 0 && deficit > 0) {
+                const grossNisaNeeded = Math.min(nisaBalance, deficit);
+                nisaBalance -= grossNisaNeeded;
+                sold += grossNisaNeeded;
+                cash += grossNisaNeeded;
+                deficit = Math.max(0, -cash);
+            }
+
+            if (cash < 0) {
+                shortfallAmount = -cash;
+                if (depletionAge === null) depletionAge = age;
+                isAlreadyBankrupt = true;
                 cash = 0;
-                idc = 0;
-                
-                if (inv >= deficit) {
-                    let withdrawal = deficit / (1 - 0.20315 * 0.5);
-                    taxIncurred = withdrawal - deficit;
-                    inv -= withdrawal;
-                } else {
-                    cash -= (deficit - inv);
-                    inv = 0;
-                }
+                nisaBalance = 0;
+                taxableBalance = 0;
             }
         }
-        
-        let totalCashAndIdc = cash + idc;
-        let tot = inv + totalCashAndIdc;
-        
-        let isBankrupt = false;
-        if (tot < 0) {
-            isBankrupt = true;
-            isAlreadyBankrupt = true;
-            if (bankruptedAge === 0) bankruptedAge = a;
-            tot = 0;
-            cash = 0;
-            inv = 0;
-            idc = 0;
-        }
-        
-        results.push({ a, tot, inv, cashAndIdc: Math.max(0, totalCashAndIdc), totalCost, taxIncurred, isBankrupt });
+
+        taxes = baseTaxes + saleTax;
+
+        const investment = nisaBalance + taxableBalance;
+        const available = Math.max(0, cash) + investment;
+        const wealth = available + dc;
+        minimum = Math.min(minimum, available);
+
+        rows.push({
+            age, salary: salary + work, pension: pension + dcIncome + dcLump, retirement,
+            spend, housing, taxes, sold, cash, investment, nisa: nisaBalance, taxable: taxableBalance, dc,
+            available, wealth, shortfall: shortfallAmount, contribution, oneOff, cashTarget, income, isBankrupt: false
+        });
     }
-    return { bankruptedAge, results };
+
+    const last = rows[rows.length - 1];
+    const success = !depletionAge && last && last.available >= o.reserve;
+    return { rows, depletionAge, minimum, last, success, fireAge };
 }
 
-function getParamsFromUI() {
-    return {
-        cA: parseInt(el.cA.value),
-        tLife: parseInt(el.tLife.value),
-        rA: parseInt(el.rA.value),
-        inc: parseFloat(el.inc.value),
-        ivA: parseFloat(el.ivA.value),
-        csA: parseFloat(el.csA.value),
-        idcStart: parseFloat(el.idc.value),
-        yld: parseFloat(el.yld.value) / 100,
-        inf: parseFloat(el.inf.value) / 100,
-        cB6: parseFloat(el.cB6.value),
-        cA6: parseFloat(el.cA6.value),
-        hType: document.querySelector('input[name="hType"]:checked').value,
-        lBal: parseFloat(el.lBal.value),
-        lPay: parseFloat(el.lPay.value),
-        lRat: parseFloat(el.lRat.value) / 100,
-        rMon: parseFloat(el.rMon.value),
-        pen: parseFloat(el.pen.value),
-        pA: parseInt(el.pA.value)
+function simulateScenario(o, name, fireAge) { return simulate(o, { scenario: name, fireAge }); }
+function scenarioLabel(s) { return s === 'basic' ? '基本' : s === 'crash' ? '暴落' : '低迷'; }
+function current() { return readInputs(); }
+
+function calcReverseAge(o) {
+    const max = Math.min(110, Math.max(o.startAge, o.targetAge));
+    for (let age = Math.round(o.startAge); age <= max; age++) {
+        const res = simulate(o, { scenario, fireAge: age });
+        if (res.success) return age;
+    }
+    return null;
+}
+
+function calcRequiredIncome(o, endAge) {
+    const start = Math.round(o.startAge);
+    if (endAge < start) return null;
+    let lo = 0, hi = 5000;
+    for (let i = 0; i < 28; i++) {
+        const mid = (lo + hi) / 2;
+        const x = { ...o, workIncome: mid, workStart: start, workEnd: endAge };
+        const res = simulate(x, { scenario, fireAge: start });
+        if (res.success) hi = mid; else lo = mid;
+    }
+    return hi >= 4999 ? null : hi;
+}
+
+function calcMaxSpend(o) {
+    let lo = 0, hi = 3000;
+    for (let i = 0; i < 28; i++) {
+        const mid = (lo + hi) / 2;
+        const x = { ...o, postSpend: mid };
+        const res = simulate(x, { scenario, fireAge: Math.round(o.startAge) });
+        if (res.success) lo = mid; else hi = mid;
+    }
+    return lo < .1 ? 0 : lo;
+}
+
+function updateLoanDisplay() {
+    const homePrice = readNumber('homePrice', DEFAULTS.homePrice);
+    const downPayment = readNumber('downPayment', DEFAULTS.downPayment);
+    const calculatedLoan = Math.max(0, homePrice - downPayment);
+    const el = $('calculatedLoanDisplay');
+    if (el) el.value = fmt(calculatedLoan);
+}
+
+function recalculate() {
+    const o = current();
+    updateLoanDisplay();
+
+    const ageError = validateAgeRange(o.startAge, o.targetAge);
+    if (ageError) {
+        $('status').className = 'status bad';$('status').textContent = ageError;
+        return;
+    }
+
+    const selected = simulateScenario(o, scenario, Math.round(o.startAge));
+    const results = {
+        basic: simulateScenario(o, 'basic', Math.round(o.startAge)),
+        crash: simulateScenario(o, 'crash', Math.round(o.startAge)),
+        low: simulateScenario(o, 'low', Math.round(o.startAge))
     };
+    lastResults = { selected, results };
+
+    const last = selected.last;
+    const passed = selected.success;
+    const earliest = calcReverseAge(o);
+    const required = calcRequiredIncome(o, Math.round(o.reverseEnd));
+    const maxSpend = calcMaxSpend(o);
+
+    $('status').className = 'status ' + (passed ? 'good' : 'bad');
+    $('status').textContent = passed ? 'この条件では、目標寿命まで資産が持ち、目標残存資産も満たします。' : 'この条件では、目標寿命までの資産維持または目標残存資産の条件を満たしません。';
+    $('verdict').textContent = passed ? 'FIRE条件を達成' : '条件を再検討';
+    $('verdictSub').textContent = `${scenarioLabel(scenario)}シナリオ／目標 ${o.targetAge}歳`;
+    $('targetAssets').textContent = fmt(last ? last.available : 0);
+    $('targetSub').textContent = `目標残存資産との差：${fmt((last ? last.available : 0) - o.reserve)}`;
+    $('depletion').textContent = fmtAge(selected.depletionAge);$('fireAgeResult').textContent = fmtAge(earliest);
+    $('reverseAge').textContent = fmtAge(earliest);$('reverseIncome').textContent = required == null ? '条件内で解なし' : fmt(required) + '/年';
+    $('reverseSpend').textContent = fmt(maxSpend) + '/年';
+
+    renderCompare(results, o);
+    renderRows(selected.rows);
+    drawChart(selected.rows);
+    save();
 }
 
-function calc() {
-    const params = getParamsFromUI();
-    const { bankruptedAge, results } = runCoreEngine(params);
-    const { tLife, cA } = params;
-    
-    tb.innerHTML = "";
-    results.forEach(d => {
-        const tr = document.createElement('tr');
-        if(d.isBankrupt) tr.style.background = '#fef2f2';
-        tr.innerHTML = `
-            <td style="text-align:center; font-weight:bold;">${d.a === params.rA ? d.a + '歳 🚀' : d.a + '歳'}</td>
-            <td style="font-weight:bold; color:var(--primary);">${fmt(d.tot)}</td>
-            <td>${fmt(d.inv)}</td>
-            <td>${fmt(d.cashAndIdc)}</td>
-            <td>${fmt(d.totalCost)}</td>
-            <td style="color:var(--danger); font-weight:bold;">${d.taxIncurred > 0 ? fmt(d.taxIncurred) : '-'}</td>
-            <td style="font-weight:bold; color:${d.isBankrupt ? 'var(--danger)' : 'var(--success)'};">${d.isBankrupt ? '⚠️ 資金ショート' : '健全'}</td>`;
-        tb.appendChild(tr);
+function renderCompare(results, o) {
+    const root = $('compare');
+    root.innerHTML = '';
+    ['basic', 'crash', 'low'].forEach(k => {
+        const r = results[k], el = document.createElement('div');
+        el.className = 'scenario-card';
+        el.innerHTML = `<h3>${scenarioLabel(k)}</h3><div class="big">${r.success ? '成功' : '要見直し'}</div><p>枯渇：${r.depletionAge == null ? 'なし' : r.depletionAge + '歳'}<br>目標寿命時：${fmt(r.last.available)}<br>最低残高：${fmt(r.minimum)}</p>`;
+        root.appendChild(el);
     });
-    
-    const sumLifespan = document.getElementById('sum-lifespan');
-    const cardLifespan = document.getElementById('card-lifespan');
-    document.getElementById('lbl-lifespan').textContent = `${tLife}歳までの状態（現在の設定）`;
-
-    if (bankruptedAge > 0 && bankruptedAge <= tLife) {
-        sumLifespan.textContent = `${bankruptedAge}歳で枯渇 (目標未達)`;
-        cardLifespan.className = "summary-card alert";
-    } else {
-        sumLifespan.textContent = `${tLife}歳クリア 🎉`;
-        cardLifespan.className = "summary-card success";
-    }
-    
-    document.getElementById('lbl-target-asset').textContent = `${tLife}歳時点の総資産`;
-    const getAssetAt = (age) => {
-        const found = results.find(x => x.a === age);
-        if (!found) return "対象外";
-        return found.a < cA ? "開始前" : fmt(found.tot);
-    };
-    
-    document.getElementById('sum-target-asset').textContent = getAssetAt(tLife);
-    document.getElementById('sum-100').textContent = getAssetAt(100);
 }
 
-function reverseCalc() {
-    const params = getParamsFromUI();
-    const { cA, tLife } = params;
-    let targetAge = -1;
+function renderRows(rows) {
+    $('yearRows').innerHTML = rows.map(r => {
+        const assetOrShortfallText = r.isBankrupt 
+            ? `<span style="color:var(--red); font-weight:bold;">枯渇 (年間不足: ${fmt(r.shortfall)})</span>` 
+            : fmt(r.available);
 
-    for (let checkRA = cA; checkRA <= 70; checkRA++) {
-        let testParams = { ...params, rA: checkRA };
-        const { bankruptedAge } = runCoreEngine(testParams);
-        if (bankruptedAge === 0 || bankruptedAge > tLife) {
-            targetAge = checkRA;
-            break;
-        }
-    }
-    
-    const gRes = document.getElementById('gRes');
-    const sumReverse = document.getElementById('sum-reverse');
-    const cardReverse = document.getElementById('card-reverse');
-    
-    gRes.style.display = "block";
-    if (targetAge === cA) {
-        gRes.innerHTML = `🎉 現在の設定でも${tLife}歳まで資産が十分に持ちます！`;
-        gRes.className = "alert-box alert-info";
-        sumReverse.textContent = `${cA}歳 (今すぐ可)`;
-        cardReverse.className = "summary-card success";
-    } else if (targetAge > cA && targetAge <= 70) {
-        gRes.innerHTML = `🎯 ${tLife}歳まで資産を切らさないための逆算結果：**【最低 ${targetAge}歳】**まで働く必要があります。（※現在の設定は${params.rA}歳）`;
-        gRes.className = "alert-box alert-info";
-        sumReverse.textContent = `${targetAge}歳 (推奨)`;
-        cardReverse.className = "summary-card";
-    } else {
-        gRes.innerHTML = `⚠️ 70歳まで働いても${tLife}歳までに資産が枯渇する試算となります。支出や利回りの見直しが必要です。`;
-        gRes.className = "alert-box alert-warn";
-        sumReverse.textContent = "70歳超え困難";
-        cardReverse.className = "summary-card alert";
-    }
-    calc();
+        const cells = [
+            ['年齢', r.age + '歳'], ['給与等', fmt(r.salary)], ['年金・DC', fmt(r.pension)], 
+            ['生活費', fmt(r.spend)], ['住宅費', fmt(r.housing)], ['税・社保', fmt(r.taxes)], 
+            ['売却額', fmt(r.sold)], ['現金', fmt(r.cash)], ['投資資産', fmt(r.investment)], 
+            ['DC等', fmt(r.dc)], ['利用可能資産／不足額', assetOrShortfallText]
+        ];
+        return '<tr' + (r.isBankrupt ? ' style="background:#fff0ed;"' : '') + '>' + cells.map(c => `<td data-label="${c[0]}">${c[1]}</td>`).join('') + '</tr>';
+    }).join('');
 }
 
-function triggerCalc() {
-    if (parseInt(el.rA.value) < parseInt(el.cA.value)) {
-        el.rA.value = el.cA.value;
-        numEl.rA.value = el.cA.value;
+function drawChart(rows) {
+    const canvas = $('chart'), rect = canvas.getBoundingClientRect(), dpr = window.devicePixelRatio || 1;
+    canvas.width = Math.max(300, rect.width) * dpr;
+    canvas.height = Math.max(200, rect.height) * dpr;
+    const ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+    const w = canvas.width / dpr, h = canvas.height / dpr;
+    ctx.clearRect(0, 0, w, h);
+
+    const pad = {l: 55, r: 12, t: 15, b: 30}, pw = w - pad.l - pad.r, ph = h - pad.t - pad.b;
+    const values = rows.map(r => Math.max(0, r.available)), cash = rows.map(r => Math.max(0, r.cash)), wealth = rows.map(r => Math.max(0, r.wealth));
+    let max = Math.max(100, ...values, ...cash, ...wealth);
+    max = Math.ceil(max / 500) * 500;
+    if (max === 0) max = 100;
+
+    ctx.font = '11px system-ui';
+    ctx.strokeStyle = '#e3e9f2';
+    ctx.fillStyle = '#68778d';
+    ctx.lineWidth = 1;
+
+    for (let i = 0; i <= 4; i++) {
+        const y = pad.t + ph * i / 4;
+        ctx.beginPath();
+        ctx.moveTo(pad.l, y);
+        ctx.lineTo(w - pad.r, y);
+        ctx.stroke();
+        ctx.fillText(Math.round(max * (1 - i / 4)).toLocaleString(), 4, y + 4);
     }
-    calc();
+
+    const x = i => pad.l + (rows.length <= 1 ? 0 : i / (rows.length - 1) * pw);
+    const y = v => pad.t + ph - (v / max) * ph;
+
+    function line(arr, color, width) {
+        ctx.beginPath();
+        arr.forEach((v, i) => i ? ctx.lineTo(x(i), y(v)) : ctx.moveTo(x(i), y(v)));
+        ctx.strokeStyle = color;
+        ctx.lineWidth = width;
+        ctx.stroke();
+    }
+
+    line(wealth, '#0b9a77', 2);
+    line(cash, '#e58b36', 2);
+    line(values, '#2459d3', 3);
+
+    ctx.fillStyle = '#68778d';
+    const count = Math.min(6, rows.length);
+    for (let i = 0; i < count; i++) {
+        const idx = Math.round(i * (rows.length - 1) / Math.max(1, count - 1));
+        ctx.fillText(rows[idx].age + '歳', x(idx) - 12, h - 7);
+    }
 }
 
-document.getElementById('calcBtn').addEventListener('click', calc);
-document.getElementById('backBtn').addEventListener('click', reverseCalc);
-document.getElementsByName('hType').forEach(r => r.addEventListener('change', () => { toggleHousing(); calc(); }));
+function setMode() {
+    detailed = !detailed;
+    $('detailSection').classList.toggle('hidden', !detailed);$('modeBtn').textContent = detailed ? '詳細設定を隠す' : '詳細設定を表示';
+    save(); recalculate();
+}
 
-window.addEventListener('DOMContentLoaded', () => {
-    toggleHousing();
-    calc();
-});
+function bind() {
+    document.querySelectorAll('input, select').forEach(el => {
+        if (el.closest('#events')) return;
+        el.addEventListener('input', () => {
+            if (el.type === 'number' && el.value.trim() === '') return;
+            recalculate();
+        });
+    });
+
+    document.querySelectorAll('[data-scenario]').forEach(el => el.addEventListener('click', () => {
+        scenario = el.dataset.scenario;
+        document.querySelectorAll('[data-scenario]').forEach(b => b.classList.toggle('active', b === el));
+        $('crashField').classList.toggle('hidden', scenario !== 'crash');
+        recalculate();
+    }));
+
+    $('modeBtn').addEventListener('click', setMode);$('addEvent').addEventListener('click', () => {
+        events.push({ age: Math.round(readNumber('startAge', 40, 18, 100)) + 10, amount: 100, name: '一時支出' });
+        renderEvents(); save(); recalculate();
+    });
+
+    $('resetBtn').addEventListener('click', () => {
+        if (!confirm('入力内容をすべて初期設定に戻しますか？')) return;
+        for (const id in DEFAULTS) if ($(id))$(id).value = DEFAULTS[id];
+        scenario = 'basic'; detailed = false; events = [];
+        $('detailSection').classList.add('hidden');$('modeBtn').textContent = '詳細設定を表示';
+        document.querySelectorAll('[data-scenario]').forEach(b => b.classList.toggle('active', b.dataset.scenario === 'basic'));
+        $('crashField').classList.add('hidden');
+        renderEvents(); recalculate();
+    });
+
+    window.addEventListener('resize', () => {
+        if (lastResults.selected) drawChart(lastResults.selected.rows);
+    });
+}
+
+load();
+document.querySelectorAll('[data-scenario]').forEach(b => b.classList.toggle('active', b.dataset.scenario === scenario));
+$('detailSection').classList.toggle('hidden', !detailed);$('modeBtn').textContent = detailed ? '詳細設定を隠す' : '詳細設定を表示';
+$('crashField').classList.toggle('hidden', scenario !== 'crash');
+renderEvents();
+bind();
+recalculate();
+
+})();
 </script>
 </body>
 </html>
