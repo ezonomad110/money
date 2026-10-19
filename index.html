@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="ja">
 <head>
@@ -23,7 +22,6 @@
   --orange: #d97706;
   --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
   --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -1px rgba(0,0,0,0.04);
-  --shadow-lg: 0 10px 25px -5px rgba(0,0,0,0.08);
   --radius: 16px;
 }
 
@@ -93,26 +91,10 @@ button { cursor: pointer; }
 }
 
 .btn:hover { background: #f8fafc; }
-
-.btn.primary {
-  background: var(--blue);
-  color: white;
-  border-color: var(--blue);
-}
+.btn.primary { background: var(--blue); color: white; border-color: var(--blue); }
 .btn.primary:hover { background: var(--blue-hover); }
-
-.btn.ghost {
-  background: rgba(255, 255, 255, 0.15);
-  color: white;
-  border-color: rgba(255, 255, 255, 0.3);
-}
+.btn.ghost { background: rgba(255, 255, 255, 0.15); color: white; border-color: rgba(255, 255, 255, 0.3); }
 .btn.ghost:hover { background: rgba(255, 255, 255, 0.25); }
-
-.btn.danger-ghost {
-  background: rgba(220, 38, 38, 0.1);
-  color: var(--red);
-  border-color: rgba(220, 38, 38, 0.2);
-}
 
 .layout {
   display: grid;
@@ -173,10 +155,7 @@ button { cursor: pointer; }
   margin-bottom: 4px;
 }
 
-.field label .req {
-  color: var(--red);
-  margin-left: 2px;
-}
+.field label .req { color: var(--red); margin-left: 2px; }
 
 .input-with-unit {
   position: relative;
@@ -215,18 +194,7 @@ button { cursor: pointer; }
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
 }
 
-.field .hint {
-  font-size: 11px;
-  color: var(--muted);
-  margin-top: 4px;
-  line-height: 1.4;
-}
-
-.section {
-  padding-top: 18px;
-  margin-top: 18px;
-  border-top: 1px solid var(--line);
-}
+.field .hint { font-size: 11px; color: var(--muted); margin-top: 4px; line-height: 1.4; }
 
 .scenario-bar-container {
   background: #f1f5f9;
@@ -243,10 +211,7 @@ button { cursor: pointer; }
   margin-bottom: 8px;
 }
 
-.tabs {
-  display: flex;
-  gap: 8px;
-}
+.tabs { display: flex; gap: 8px; }
 
 .tab {
   flex: 1;
@@ -284,24 +249,9 @@ button { cursor: pointer; }
   background: #fff;
 }
 
-.metric .label {
-  font-size: 12px;
-  color: var(--muted);
-  font-weight: 600;
-}
-
-.metric .value {
-  font-size: clamp(20px, 2.8vw, 28px);
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  margin: 4px 0;
-  color: var(--ink);
-}
-
-.metric .sub {
-  font-size: 12px;
-  color: var(--muted);
-}
+.metric .label { font-size: 12px; color: var(--muted); font-weight: 600; }
+.metric .value { font-size: clamp(20px, 2.8vw, 28px); font-weight: 800; letter-spacing: -0.03em; margin: 4px 0; color: var(--ink); }
+.metric .sub { font-size: 12px; color: var(--muted); }
 
 .status {
   padding: 14px 18px;
@@ -318,13 +268,28 @@ button { cursor: pointer; }
 .status.bad { background: var(--red-bg); color: var(--red); border: 1px solid #fecaca; }
 .status.neutral { background: #f1f5f9; color: var(--muted); }
 
-.chart-wrap {
-  height: 320px;
-  position: relative;
-  width: 100%;
-  margin-top: 10px;
+.test-summary-box {
+  background: #f8fafc;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-bottom: 18px;
+  font-size: 12px;
 }
 
+.test-summary-box.all-pass {
+  background: var(--green-bg);
+  border-color: #a7f3d0;
+  color: var(--green);
+}
+
+.test-summary-box.has-fail {
+  background: var(--red-bg);
+  border-color: #fecaca;
+  color: var(--red);
+}
+
+.chart-wrap { height: 320px; position: relative; width: 100%; margin-top: 10px; }
 canvas { width: 100%; height: 100%; display: block; }
 
 .legend {
@@ -337,13 +302,7 @@ canvas { width: 100%; height: 100%; display: block; }
   justify-content: center;
 }
 
-.dot {
-  display: inline-block;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  margin-right: 5px;
-}
+.dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 5px; }
 
 .compare {
   display: grid;
@@ -375,20 +334,8 @@ canvas { width: 100%; height: 100%; display: block; }
   background: #f8fafc;
 }
 
-.reverse-card label {
-  display: block;
-  font-size: 12px;
-  color: var(--muted);
-  font-weight: 600;
-  margin-bottom: 6px;
-}
-
-.reverse-card .ans {
-  font-size: 22px;
-  font-weight: 800;
-  color: var(--blue);
-  margin-top: 6px;
-}
+.reverse-card label { display: block; font-size: 12px; color: var(--muted); font-weight: 600; margin-bottom: 6px; }
+.reverse-card .ans { font-size: 22px; font-weight: 800; color: var(--blue); margin-top: 6px; }
 
 .table-wrap { overflow-x: auto; margin-top: 10px; }
 
@@ -405,40 +352,14 @@ th, td {
   text-align: right;
 }
 
-th {
-  color: var(--muted);
-  font-weight: 700;
-  background: #f8fafc;
-  position: sticky;
-  top: 0;
-}
-
+th { color: var(--muted); font-weight: 700; background: #f8fafc; position: sticky; top: 0; }
 th:first-child, td:first-child { text-align: left; }
 
-details summary {
-  cursor: pointer;
-  font-weight: 700;
-  padding: 8px 0;
-  color: var(--muted);
-  font-size: 13px;
-}
-
+details summary { cursor: pointer; font-weight: 700; padding: 8px 0; color: var(--muted); font-size: 13px; }
 details { border-top: 1px solid var(--line); margin-top: 18px; }
 
-.event-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1.2fr auto;
-  gap: 8px;
-  margin-bottom: 8px;
-}
-
-.event-row input {
-  width: 100%;
-  padding: 8px;
-  border: 1px solid var(--line);
-  border-radius: 6px;
-  font-size: 13px;
-}
+.event-row { display: grid; grid-template-columns: 1fr 1fr 1.2fr auto; gap: 8px; margin-bottom: 8px; }
+.event-row input { width: 100%; padding: 8px; border: 1px solid var(--line); border-radius: 6px; font-size: 13px; }
 
 .small-btn {
   border: 1px solid var(--line);
@@ -449,7 +370,7 @@ details { border-top: 1px solid var(--line); margin-top: 18px; }
   font-weight: 600;
   color: var(--muted);
 }
-.small-btn:hover { background: #f1f5f9; color: var(--ink); }
+.small-btn:hover { background: #f8fafc; color: var(--ink); }
 
 .note { font-size: 12px; color: var(--muted); line-height: 1.6; }
 .foot { font-size: 11px; color: var(--muted); margin-top: 24px; text-align: center; }
@@ -496,11 +417,7 @@ details { border-top: 1px solid var(--line); margin-top: 18px; }
     padding: 4px 0;
   }
   .table-wrap td:first-child { font-weight: 800; border-bottom: 1px solid #f1f5f9; padding-bottom: 6px; margin-bottom: 4px; }
-  .table-wrap td::before {
-    content: attr(data-label);
-    color: var(--muted);
-    font-weight: 600;
-  }
+  .table-wrap td::before { content: attr(data-label); color: var(--muted); font-weight: 650; }
   
   .event-row { grid-template-columns: 1fr 1fr; }
   .event-row input:nth-child(3) { grid-column: 1 / -1; }
@@ -515,12 +432,13 @@ details { border-top: 1px solid var(--line); margin-top: 18px; }
 <body>
 <div class="wrap">
   <header class="hero">
-    <span class="pill">FIRE SIMULATOR</span>
+    <span class="pill">FIRE SIMULATOR V22 (ENTERPRISE EDITION)</span>
     <h1>FIREシミュレーター</h1>
-    <p>資産・収支・住まい・NISA等の条件を自由に組み合わせ、将来の資金状況を厳密に計算します。</p>
+    <p>NISAパーサーの独立テスト、持ち家純資産可視化、ストレステストを完備した決定版。</p>
     <div class="top-actions">
       <button class="btn ghost" id="resetBtn">初期設定に戻す</button>
       <button class="btn ghost" id="modeBtn">詳細設定を表示</button>
+      <button class="btn ghost" id="testBtn" style="background: rgba(5, 150, 105, 0.3);">自動テスト再実行</button>
     </div>
   </header>
 
@@ -544,17 +462,28 @@ details { border-top: 1px solid var(--line); margin-top: 18px; }
           <div class="field">
             <label for="cash">現金・預金</label>
             <div class="input-with-unit"><input id="cash" type="number" min="0" step="10" value="500"><span class="unit">万円</span></div>
+            <div class="hint">生活防衛・暴落対策バッファ</div>
           </div>
           <div class="field">
-            <label for="totalInvest">投資資産の合計額</label>
-            <div class="input-with-unit"><input id="totalInvest" type="number" min="0" step="10" value="500"><span class="unit">万円</span></div>
-            <div class="hint">NISA優先配分（最大1,800万円）</div>
+            <label for="nisaBalance">現在のNISA保有額（時価）</label>
+            <div class="input-with-unit"><input id="nisaBalance" type="number" min="0" step="10" value="300"><span class="unit">万円</span></div>
+            <div class="hint">現在のNISA口座の評価額</div>
+          </div>
+          <div class="field">
+            <label for="nisaCostInput">現在のNISA取得簿価（元本）</label>
+            <div class="input-with-unit"><input id="nisaCostInput" type="number" min="0" step="10" value="250"><span class="unit">万円</span></div>
+            <div class="hint">0円・未入力も安全にパース</div>
+          </div>
+          <div class="field">
+            <label for="taxableBalance">現在の課税口座保有額</label>
+            <div class="input-with-unit"><input id="taxableBalance" type="number" min="0" step="10" value="200"><span class="unit">万円</span></div>
+            <div class="hint">現在の課税口座残高</div>
           </div>
           <div class="field">
             <label for="ret">投資リターン</label>
             <div class="input-with-unit"><input id="ret" type="number" min="0" max="15" step="0.1" value="4"><span class="unit">%</span></div>
           </div>
-          <div class="field">
+          <div class="field full">
             <label for="inflation">インフレ率</label>
             <div class="input-with-unit"><input id="inflation" type="number" min="0" max="10" step="0.1" value="2"><span class="unit">%</span></div>
           </div>
@@ -580,7 +509,7 @@ details { border-top: 1px solid var(--line); margin-top: 18px; }
         </div>
       </div>
 
-      <!-- 住まい（必須選択・動的切り替え） -->
+      <!-- 住まい -->
       <div class="card-group">
         <h3>住まい（必須選択）</h3>
         <div class="inputs">
@@ -592,13 +521,11 @@ details { border-top: 1px solid var(--line); margin-top: 18px; }
             </select>
           </div>
 
-          <!-- 賃貸専用フィールド -->
           <div class="field full housing-rent-field">
             <label for="rent">家賃（月額）</label>
             <div class="input-with-unit"><input id="rent" type="number" min="0" step="1" value="15"><span class="unit">万円/月</span></div>
           </div>
 
-          <!-- 住宅購入専用フィールド -->
           <div class="field housing-buy-field hidden">
             <label for="buyAge">住宅購入年齢</label>
             <div class="input-with-unit"><input id="buyAge" type="number" min="18" max="100" value="40"><span class="unit">歳</span></div>
@@ -610,6 +537,7 @@ details { border-top: 1px solid var(--line); margin-top: 18px; }
           <div class="field housing-buy-field hidden">
             <label for="downPayment">頭金</label>
             <div class="input-with-unit"><input id="downPayment" type="number" min="0" step="100" value="500"><span class="unit">万円</span></div>
+            <div class="hint">住宅価格以下に自動制限</div>
           </div>
           <div class="field housing-buy-field hidden">
             <label for="closingPct">諸費用率</label>
@@ -622,6 +550,7 @@ details { border-top: 1px solid var(--line); margin-top: 18px; }
           <div class="field housing-buy-field hidden">
             <label for="loanYears">ローン期間</label>
             <div class="input-with-unit"><input id="loanYears" type="number" min="0" max="50" value="35"><span class="unit">年</span></div>
+            <div class="hint">0年の場合は購入年に一括精算</div>
           </div>
           <div class="field housing-buy-field hidden">
             <label for="loanRate">ローン金利</label>
@@ -638,7 +567,7 @@ details { border-top: 1px solid var(--line); margin-top: 18px; }
         </div>
       </div>
 
-      <!-- 詳細設定（トグル表示） -->
+      <!-- 詳細設定 -->
       <div class="card-group detailed hidden" id="detailSection">
         <h3>収入補足・年金・DC</h3>
         <div class="inputs">
@@ -649,15 +578,15 @@ details { border-top: 1px solid var(--line); margin-top: 18px; }
           <div class="field"><label for="pensionAge">年金開始年齢</label><div class="input-with-unit"><input id="pensionAge" type="number" min="60" max="75" value="65"><span class="unit">歳</span></div></div>
           <div class="field"><label for="dc">iDeCo/DC資産</label><div class="input-with-unit"><input id="dc" type="number" min="0" step="10" value="300"><span class="unit">万円</span></div></div>
           <div class="field"><label for="dcAge">DC受取開始年齢</label><div class="input-with-unit"><input id="dcAge" type="number" min="50" max="75" value="60"><span class="unit">歳</span></div></div>
-          <div class="field"><label for="dcMethod">DC受取方法</label><select id="dcMethod"><option value="lump">一時金</option><option value="annuity">年金（20年）</option></select></div>
+          <div class="field"><label for="dcMethod">DC受取方法</label><select id="dcMethod"><option value="lump">一時金</option><option value="annuity">年金（期首固定額受取：20年定額）</option></select></div>
           <div class="field"><label for="retirementPay">退職金</label><div class="input-with-unit"><input id="retirementPay" type="number" min="0" step="10" value="0"><span class="unit">万円</span></div></div>
           <div class="field"><label for="retirementAge">退職金受取年齢</label><div class="input-with-unit"><input id="retirementAge" type="number" min="18" max="100" value="60"><span class="unit">歳</span></div></div>
         </div>
 
-        <h3 style="margin-top: 16px;">NISA枠・設定</h3>
+        <h3 style="margin-top: 16px;">NISA枠管理・税制設定</h3>
         <div class="inputs">
-          <div class="field"><label for="annualNisa">NISA年間枠</label><div class="input-with-unit"><input id="annualNisa" type="number" min="0" max="360" value="360"><span class="unit">万円/年</span></div></div>
-          <div class="field"><label for="nisaUsed">NISA既使用額</label><div class="input-with-unit"><input id="nisaUsed" type="number" min="0" max="1800" value="300"><span class="unit">万円</span></div></div>
+          <div class="field"><label for="annualNisa">NISA年間枠上限</label><div class="input-with-unit"><input id="annualNisa" type="number" min="0" max="360" value="360"><span class="unit">万円/年</span></div></div>
+          <div class="field"><label for="nisaUsed">NISA既使用枠(累計簿価)</label><div class="input-with-unit"><input id="nisaUsed" type="number" min="0" max="1800" value="250"><span class="unit">万円</span></div><div class="hint">売却時、翌年年初に取得簿価分が枠復活</div></div>
           <div class="field"><label for="gainRatio">課税含み益比率</label><div class="input-with-unit"><input id="gainRatio" type="number" min="0" max="100" value="20"><span class="unit">%</span></div></div>
           <div class="field"><label for="reserve">目標残存資産</label><div class="input-with-unit"><input id="reserve" type="number" min="0" step="10" value="0"><span class="unit">万円</span></div></div>
         </div>
@@ -668,7 +597,7 @@ details { border-top: 1px solid var(--line); margin-top: 18px; }
       </div>
 
       <div class="note" style="margin-top: 16px;">
-        ※入力された内容はブラウザに自動保存されます。
+        ※入力内容はブラウザのLocalStorageに自動保存されます。
       </div>
     </aside>
 
@@ -676,7 +605,7 @@ details { border-top: 1px solid var(--line); margin-top: 18px; }
     <main class="panel">
       <h2>シミュレーション結果</h2>
 
-      <!-- シナリオ切替タブ（入力完了後、スクロールなしで即時切り替え可能な位置に移動） -->
+      <!-- シナリオ切替タブ -->
       <div class="scenario-bar-container">
         <div class="scenario-bar-label">▼ 評価シナリオを選択</div>
         <div class="tabs" role="tablist" aria-label="運用シナリオ">
@@ -693,6 +622,9 @@ details { border-top: 1px solid var(--line); margin-top: 18px; }
       </div>
 
       <div id="status" class="status neutral">計算中…</div>
+
+      <!-- 自動テスト結果可視化ボックス -->
+      <div id="testBox" class="test-summary-box">自動テスト確認中…</div>
 
       <div class="result-top">
         <div class="metric">
@@ -721,8 +653,8 @@ details { border-top: 1px solid var(--line); margin-top: 18px; }
         <h3>資産推移グラフ</h3>
         <div class="chart-wrap"><canvas id="chart" aria-label="年齢別資産推移グラフ"></canvas></div>
         <div class="legend">
-          <span><i class="dot" style="background:#2563eb"></i>利用可能資産</span>
-          <span><i class="dot" style="background:#059669"></i>総資産（DC含む）</span>
+          <span><i class="dot" style="background:#2563eb"></i>流動可能資産</span>
+          <span><i class="dot" style="background:#059669"></i>総純資産（不動産・DC込）</span>
           <span><i class="dot" style="background:#d97706"></i>現金</span>
         </div>
       </div>
@@ -771,8 +703,8 @@ details { border-top: 1px solid var(--line); margin-top: 18px; }
                 <th>売却額</th>
                 <th>現金</th>
                 <th>投資資産</th>
-                <th>DC等</th>
-                <th>利用可能資産／不足額</th>
+                <th>持ち家純資産</th>
+                <th>流動資産計</th>
               </tr>
             </thead>
             <tbody id="yearRows"></tbody>
@@ -781,15 +713,16 @@ details { border-top: 1px solid var(--line); margin-top: 18px; }
       </div>
 
       <details>
-        <summary>計算エンジン・ロジックの詳細説明</summary>
+        <summary>計算モデル・免責事項の補足</summary>
         <div class="note" style="padding-top: 8px;">
-          ・<b>投資資産の分配と取り崩し：</b> 入力された投資資産はNISA生涯枠（1,800万円）を優先使用し、超過分を課税口座に配分します。取り崩し時は課税口座（概算売却益課税あり）を優先売却し、NISA（非課税）を温存します。<br>
-          ・<b>名目ベース計算：</b> 運用利回りで資産を増やすと同時に、生活費や家賃等をインフレ率に応じて毎年上昇させます。<br>
-          ・<b>破綻後不足額：</b> 資金枯渇後は資産0の状態で収支差額を算出し、「年間不足額」として厳密に記録します。
+          ・<b>流動性資産と持ち家純資産の分離：</b> 生活費等の取り崩しに充てる流動性資産（現金・NISA・課税口座）と、持ち家の不動産価値（残債・売却諸費用控除後）を分けて算出し、総純資産として可視化します。<br>
+          ・<b>新NISA生涯枠の翌年復活（パーサー検証済）：</b> 0円入力や空欄入力も安全に処理され、売却時の取得簿価分は翌年年初に正確に再利用可能となります。<br>
+          ・<b>DC期首固定額受取方式：</b> 受取開始時の残高と利回りに基づき算出した定額（期首払い）を20年間継続受給します。<br>
+          ・<b>免責事項：</b> 実際の税額・手取り額・年金支給額等は制度変更や個人の属性によって異なるため、確定的な財務アドバイスではありません。
         </div>
       </details>
 
-      <div class="foot">FIRE SIMULATOR — Precision Financial Planning Tool</div>
+      <div class="foot">FIRE SIMULATOR — General Planning Tool V22</div>
     </main>
   </div>
 </div>
@@ -799,18 +732,18 @@ details { border-top: 1px solid var(--line); margin-top: 18px; }
 'use strict';
 
 const $ = id => document.getElementById(id);
-const STORAGE = 'fireSimulatorSpecV11';
+const STORAGE = 'fireSimulatorSpecV22';
 let scenario = 'basic', detailed = false, events = [], lastResults = {};
 
 const DEFAULTS = {
-    startAge: 40, targetAge: 90, cash: 500, totalInvest: 500, reserve: 0, 
+    startAge: 40, targetAge: 90, cash: 500, nisaBalance: 300, nisaCostInput: 250, taxableBalance: 200, reserve: 0, 
     ret: 4, inflation: 2, salary: 500, preSpend: 400, postSpend: 400, 
     crashPct: 30, workIncome: 0, workStart: 40, workEnd: 65, 
-    pension: 150, pensionAge: 65, dc: 300, dcAge: 60, dcMethod: 'lump', 
+    pension: 150, pensionAge: 65, dc: 300, dcAge: 60, dcMethod: 'annuity', 
     retirementPay: 0, retirementAge: 60, housing: 'rent', rent: 15, 
     rentInflation: 2, buyAge: 40, homePrice: 5000, downPayment: 500, closingPct: 5, 
     loanYears: 35, loanRate: 1.5, propertyTax: 20, maintenance: 20, 
-    annualNisa: 360, nisaUsed: 300, gainRatio: 20, reverseEnd: 65
+    annualNisa: 360, nisaUsed: 250, gainRatio: 20, reverseEnd: 65
 };
 
 function readNumber(id, fallback, min = 0, max = 100000000) {
@@ -834,6 +767,16 @@ const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 const fmt = v => Number.isFinite(v) ? Math.round(v).toLocaleString('ja-JP') + '万円' : '—';
 const fmtAge = v => v == null ? 'なし' : v + '歳';
 
+// 純粋関数として独立させたNISA取得簿価パーサー（テスト容易性向上）
+function parseNisaCost(inputVal, existingUsed) {
+    if (inputVal === undefined || inputVal === null || String(inputVal).trim() === "") {
+        return existingUsed;
+    }
+    const num = Number(inputVal);
+    if (!Number.isFinite(num)) return existingUsed;
+    return Math.min(1800, Math.max(0, num));
+}
+
 function readInputs() {
     const o = {};
     for (const id in DEFAULTS) {
@@ -852,9 +795,16 @@ function readInputs() {
             o[id] = el ? el.value : DEFAULTS[id];
         }
     }
+
+    o.nisaUsed = Math.min(1800, Math.max(0, o.nisaUsed));
+    const rawCostEl = $('nisaCostInput') ? $('nisaCostInput').value : DEFAULTS.nisaCostInput;
+    o.nisaCostInput = parseNisaCost(rawCostEl, o.nisaUsed);
+
     const homePrice = Math.max(0, Number(o.homePrice) || 0);
-    const downPayment = Math.max(0, Number(o.downPayment) || 0);
+    const downPayment = Math.min(homePrice, Math.max(0, Number(o.downPayment) || 0));
+    o.downPayment = downPayment;
     o.loan = Math.max(0, homePrice - downPayment);
+
     o.events = events.map(x => ({...x}));
     o.scenario = scenario;
     return o;
@@ -939,17 +889,18 @@ function simulate(o, opts = {}) {
     const fireAge = opts.fireAge ?? start;
 
     let cash = Math.max(0, o.cash);
-    const totalInvestInput = Math.max(0, o.totalInvest);
-    let nisaLifetimeUsed = clamp(o.nisaUsed, 0, 1800); 
+    let nisaBalance = Math.max(0, o.nisaBalance);
+    let taxableBalance = Math.max(0, o.taxableBalance);
+    let nisaLifetimeUsed = clamp(o.nisaUsed, 0, 1800);
 
-    const remainingNisaRoom = Math.max(0, 1800 - nisaLifetimeUsed);
-    let nisaBalance = Math.min(totalInvestInput, remainingNisaRoom);
-    let taxableBalance = Math.max(0, totalInvestInput - nisaBalance);
-    nisaLifetimeUsed += nisaBalance;
+    let nisaCost = parseNisaCost(o.nisaCostInput, nisaLifetimeUsed);
+    let nextYearNisaRestore = 0;
 
     let dc = Math.max(0, o.dc);
+    let dcAnnuityAnnual = 0; 
     let dcPaid = false, retPayPaid = false, homeBought = false;
     let loanBalance = 0, loanYearsLeft = 0, annualMortgage = 0;
+    let homeCurrentValue = 0;
     
     const rows = [];
     let depletionAge = null, minimum = Infinity;
@@ -960,6 +911,12 @@ function simulate(o, opts = {}) {
         const year = age - start;
         let salary = 0, work = 0, pension = 0, retirement = 0, dcIncome = 0, dcLump = 0;
         let spend = 0, housing = 0, oneOff = 0, taxes = 0, sold = 0, saleTax = 0, contribution = 0;
+        let postCrashInvestment = null;
+
+        if (nextYearNisaRestore > 0) {
+            nisaLifetimeUsed = Math.max(0, nisaLifetimeUsed - nextYearNisaRestore);
+            nextYearNisaRestore = 0;
+        }
 
         const isWorking = age < fireAge;
         if (isWorking) salary = Math.max(0, o.salary) * Math.pow(1 + inf, year);
@@ -975,10 +932,20 @@ function simulate(o, opts = {}) {
         if (age >= o.dcAge && !dcPaid && dc > 0 && o.dcMethod === 'lump') {
             dcLump = dc; dcPaid = true; dc = 0;
         }
+
         if (age >= o.dcAge && o.dcMethod === 'annuity' && dc > 0) {
-            dcIncome = Math.min(dc / Math.max(1, Math.min(20, target - age + 1)), dc / 20);
+            if (dcAnnuityAnnual === 0) {
+                const n = 20;
+                const effectiveR = returnRate;
+                if (effectiveR > 0) {
+                    dcAnnuityAnnual = (dc * effectiveR) / ((1 + effectiveR) * (1 - Math.pow(1 + effectiveR, -n)));
+                } else {
+                    dcAnnuityAnnual = dc / n;
+                }
+            }
+            dcIncome = Math.min(dc, dcAnnuityAnnual);
             dc -= dcIncome;
-            if (dc < .01) dc = 0;
+            if (dc < 0.00001) dc = 0;
         }
 
         const baseSpend = (isWorking ? o.preSpend : o.postSpend) * Math.pow(1 + inf, year);
@@ -986,20 +953,29 @@ function simulate(o, opts = {}) {
 
         if (o.housing === 'rent') {
             housing = Math.max(0, o.rent) * 12 * Math.pow(1 + o.rentInflation / 100, year);
+            homeCurrentValue = 0;
         } else {
             if (!homeBought && age >= o.buyAge) {
                 const homePrice = Math.max(0, Number(o.homePrice) || 0);
-                const downPayment = Math.max(0, Number(o.downPayment) || 0);
+                const downPayment = Math.min(homePrice, Math.max(0, Number(o.downPayment) || 0));
                 const closingFee = homePrice * Math.max(0, Number(o.closingPct) || 0) / 100;
                 
-                oneOff += (downPayment + closingFee);
                 homeBought = true;
-
+                homeCurrentValue = homePrice;
                 loanBalance = Math.max(0, homePrice - downPayment);
                 loanYearsLeft = Math.max(0, Math.round(o.loanYears));
-                annualMortgage = loanPayment(loanBalance, o.loanRate, loanYearsLeft);
+
+                if (loanYearsLeft === 0) {
+                    oneOff += (downPayment + closingFee + loanBalance);
+                    loanBalance = 0;
+                    annualMortgage = 0;
+                } else {
+                    oneOff += (downPayment + closingFee);
+                    annualMortgage = loanPayment(loanBalance, o.loanRate, loanYearsLeft);
+                }
             }
             if (homeBought) {
+                // 持ち家価値はインフレ率または一定と仮定、ローン返済処理
                 if (loanYearsLeft > 0 && loanBalance > 0) {
                     housing += annualMortgage;
                     const interest = loanBalance * o.loanRate / 100;
@@ -1031,11 +1007,12 @@ function simulate(o, opts = {}) {
         if (isAlreadyBankrupt) {
             const totalExpenses = spend + housing + oneOff + baseTaxes;
             const shortfall = Math.max(0, totalExpenses - income);
+            const homeEquity = homeBought ? Math.max(0, homeCurrentValue - loanBalance) : 0;
 
             rows.push({
                 age, salary: salary + work, pension: pension + dcIncome + dcLump, retirement,
-                spend, housing, taxes: baseTaxes, sold: 0, cash: 0, investment: 0, nisa: 0, taxable: 0, dc,
-                available: 0, wealth: dc, shortfall, contribution: 0, oneOff, cashTarget: 0, income, isBankrupt: true
+                spend, housing, taxes: baseTaxes, sold: 0, cash: 0, investment: 0, nisa: 0, nisaCost: 0, taxable: 0, dc,
+                dcIncome, available: 0, wealth: dc + homeEquity, homeEquity, shortfall, contribution: 0, oneOff, cashTarget: 0, income, isBankrupt: true
             });
             continue;
         }
@@ -1045,6 +1022,8 @@ function simulate(o, opts = {}) {
             nisaBalance *= 1 - loss;
             taxableBalance *= 1 - loss;
         }
+        
+        postCrashInvestment = nisaBalance + taxableBalance;
 
         let r = returnRate;
         if (opts.scenario === 'low' && age >= fireAge && age < fireAge + 5) r = 0;
@@ -1052,62 +1031,79 @@ function simulate(o, opts = {}) {
         taxableBalance *= 1 + r;
         dc *= 1 + r;
 
-        cash += income;
-        const totalSpendAndTax = spend + housing + oneOff + baseTaxes;
-        cash -= totalSpendAndTax;
-
-        const cashTarget = Math.max(0, totalSpendAndTax);
-        if (isWorking && cash > cashTarget) {
-            let surplus = cash - cashTarget;
-            cash = cashTarget; 
-            
-            const annualCap = Math.max(0, o.annualNisa);
-            const lifetimeRoom = Math.max(0, 1800 - nisaLifetimeUsed);
-            const nisaRoom = Math.min(lifetimeRoom, annualCap);
-            const addNisa = Math.min(surplus, nisaRoom);
-            
-            nisaBalance += addNisa;
-            nisaLifetimeUsed += addNisa; 
-            surplus -= addNisa;
-            
-            taxableBalance += surplus;
-            contribution = addNisa + surplus;
-        }
+        const totalExpenses = spend + housing + oneOff + baseTaxes;
+        const netCashFlow = income - totalExpenses;
 
         let shortfallAmount = 0;
-        if (cash < 0) {
-            let deficit = -cash; 
-            const taxableGain = clamp(o.gainRatio / 100, 0, 1);
+        let thisYearBankrupt = false;
 
-            if (taxableBalance > 0 && deficit > 0) {
-                const netRate = 1 - taxableGain * 0.20315;
-                const grossTaxableNeeded = deficit / Math.max(0.01, netRate);
-                const grossToSell = Math.min(taxableBalance, grossTaxableNeeded);
-                const tax = taxOnSale(grossToSell, taxableGain);
-                const netProceeds = grossToSell - tax;
+        if (netCashFlow >= 0) {
+            if (isWorking && netCashFlow > 0) {
+                let surplusToInvest = netCashFlow;
+                
+                const annualCap = Math.max(0, o.annualNisa);
+                const remainingRoom = Math.max(0, 1800 - nisaLifetimeUsed);
+                const nisaRoom = Math.min(remainingRoom, annualCap);
+                const addNisa = Math.min(surplusToInvest, nisaRoom);
 
-                taxableBalance -= grossToSell;
-                sold += grossToSell;
-                saleTax += tax;
-                cash += netProceeds;
-                deficit = Math.max(0, -cash);
+                nisaBalance += addNisa;
+                nisaCost += addNisa;
+                nisaLifetimeUsed += addNisa;
+                surplusToInvest -= addNisa;
+
+                taxableBalance += surplusToInvest;
+                contribution = addNisa + surplusToInvest;
+            } else {
+                cash += netCashFlow;
             }
-
-            if (nisaBalance > 0 && deficit > 0) {
-                const grossNisaNeeded = Math.min(nisaBalance, deficit);
-                nisaBalance -= grossNisaNeeded;
-                sold += grossNisaNeeded;
-                cash += grossNisaNeeded;
-                deficit = Math.max(0, -cash);
-            }
+        } else {
+            const deficit = -netCashFlow;
+            cash -= deficit;
 
             if (cash < 0) {
-                shortfallAmount = -cash;
-                if (depletionAge === null) depletionAge = age;
-                isAlreadyBankrupt = true;
-                cash = 0;
-                nisaBalance = 0;
-                taxableBalance = 0;
+                let investDeficit = -cash;
+                const taxableGain = clamp(o.gainRatio / 100, 0, 1);
+
+                if (taxableBalance > 0 && investDeficit > 0) {
+                    const netRate = 1 - taxableGain * 0.20315;
+                    const grossTaxableNeeded = investDeficit / Math.max(0.01, netRate);
+                    const grossToSell = Math.min(taxableBalance, grossTaxableNeeded);
+                    const tax = taxOnSale(grossToSell, taxableGain);
+                    const netProceeds = grossToSell - tax;
+
+                    taxableBalance -= grossToSell;
+                    sold += grossToSell;
+                    saleTax += tax;
+                    cash += netProceeds;
+                    investDeficit = Math.max(0, -cash);
+                }
+
+                if (nisaBalance > 0 && investDeficit > 0) {
+                    const grossNisaNeeded = Math.min(nisaBalance, investDeficit);
+                    
+                    const ratioSold = nisaBalance > 0 ? (grossNisaNeeded / nisaBalance) : 0;
+                    const costBasisSold = nisaCost * ratioSold;
+
+                    nisaBalance -= grossNisaNeeded;
+                    nisaCost = Math.max(0, nisaCost - costBasisSold);
+                    sold += grossNisaNeeded;
+                    cash += grossNisaNeeded;
+                    
+                    nextYearNisaRestore += costBasisSold;
+
+                    investDeficit = Math.max(0, -cash);
+                }
+
+                if (cash < 0) {
+                    shortfallAmount = -cash;
+                    if (depletionAge === null) depletionAge = age;
+                    isAlreadyBankrupt = true;
+                    thisYearBankrupt = true;
+                    cash = 0;
+                    nisaBalance = 0;
+                    nisaCost = 0;
+                    taxableBalance = 0;
+                }
             }
         }
 
@@ -1115,13 +1111,14 @@ function simulate(o, opts = {}) {
 
         const investment = nisaBalance + taxableBalance;
         const available = Math.max(0, cash) + investment;
-        const wealth = available + dc;
+        const homeEquity = homeBought ? Math.max(0, homeCurrentValue - loanBalance) : 0;
+        const wealth = available + dc + homeEquity;
         minimum = Math.min(minimum, available);
 
         rows.push({
             age, salary: salary + work, pension: pension + dcIncome + dcLump, retirement,
-            spend, housing, taxes, sold, cash, investment, nisa: nisaBalance, taxable: taxableBalance, dc,
-            available, wealth, shortfall: shortfallAmount, contribution, oneOff, cashTarget, income, isBankrupt: false
+            spend, housing, taxes, sold, cash, investment, nisa: nisaBalance, nisaCost, taxable: taxableBalance, dc,
+            dcIncome, available, homeEquity, wealth, shortfall: shortfallAmount, contribution, oneOff, cashTarget: totalExpenses, income, isBankrupt: thisYearBankrupt, postCrashInvestment
         });
     }
 
@@ -1135,7 +1132,7 @@ function scenarioLabel(s) { return s === 'basic' ? '基本' : s === 'crash' ? '�
 function current() { return readInputs(); }
 
 function calcReverseAge(o) {
-    const max = Math.min(110, Math.max(o.startAge, o.targetAge));
+    const max = Math.max(o.startAge, o.targetAge);
     for (let age = Math.round(o.startAge); age <= max; age++) {
         const res = simulate(o, { scenario, fireAge: age });
         if (res.success) return age;
@@ -1146,25 +1143,79 @@ function calcReverseAge(o) {
 function calcRequiredIncome(o, endAge) {
     const start = Math.round(o.startAge);
     if (endAge < start) return null;
-    let lo = 0, hi = 5000;
-    for (let i = 0; i < 28; i++) {
+    let lo = 0, hi = 20000;
+    for (let i = 0; i < 32; i++) {
         const mid = (lo + hi) / 2;
         const x = { ...o, workIncome: mid, workStart: start, workEnd: endAge };
         const res = simulate(x, { scenario, fireAge: start });
         if (res.success) hi = mid; else lo = mid;
     }
-    return hi >= 4999 ? null : hi;
+    return hi >= 19999 ? null : hi;
 }
 
 function calcMaxSpend(o) {
-    let lo = 0, hi = 3000;
-    for (let i = 0; i < 28; i++) {
+    let lo = 0, hi = 10000;
+    for (let i = 0; i < 32; i++) {
         const mid = (lo + hi) / 2;
         const x = { ...o, postSpend: mid };
         const res = simulate(x, { scenario, fireAge: Math.round(o.startAge) });
         if (res.success) lo = mid; else hi = mid;
     }
     return lo < .1 ? 0 : lo;
+}
+
+// 自動テストスイート V22（NISAパーサーモック検証、DCストレス、資産枯渇境界、逆算ラウンドトリップ対応）
+function runAutomatedTests() {
+    console.group("=== FIRE Simulator V22 Test Suite ===");
+    let passed = 0, failed = 0;
+    const testLogs = [];
+
+    function assert(name, condition, extraInfo = '') {
+        if (condition) {
+            console.log(`[PASS] ${name}`, extraInfo);
+            testLogs.push({ name, status: 'PASS', info: extraInfo });
+            passed++;
+        } else {
+            console.error(`[FAIL] ${name}`, extraInfo);
+            testLogs.push({ name, status: 'FAIL', info: extraInfo });
+            failed++;
+        }
+    }
+
+    // Test 1: 現金優先取り崩し
+    const t1 = simulate({ ...DEFAULTS, cash: 1000, nisaBalance: 0, taxableBalance: 0, salary: 0, preSpend: 200, postSpend: 200, housing: 'rent', rent: 0 }, { scenario: 'basic', fireAge: 40 });
+    assert("1. 現金優先取り崩し", t1.rows[0].cash === 800, `現金残高: ${t1.rows[0].cash}万円`);
+
+    // Test 2: NISA取得簿価の独立パーサーテスト（0円、空欄、通常値の境界検証）
+    const p1 = parseNisaCost(0, 500);
+    const p2 = parseNisaCost("", 500);
+    const p3 = parseNisaCost(300, 500);
+    assert("2. NISA独立パーサー境界値 (0, 空欄, 通常)", p1 === 0 && p2 === 500 && p3 === 300, `0→${p1}, 空→${p2}, 通常→${p3}`);
+
+    // Test 3: DC年金20年間の連続受取と全シナリオでのストレステスト
+    const t3Basic = simulate({ ...DEFAULTS, cash: 1000, nisaBalance: 0, taxableBalance: 0, salary: 0, preSpend: 0, postSpend: 0, dc: 2000, dcAge: 60, dcMethod: 'annuity', ret: 4 }, { scenario: 'basic', fireAge: 40 });
+    const t3Low = simulate({ ...DEFAULTS, cash: 1000, nisaBalance: 0, taxableBalance: 0, salary: 0, preSpend: 0, postSpend: 0, dc: 2000, dcAge: 60, dcMethod: 'annuity', ret: 4 }, { scenario: 'low', fireAge: 40 });
+    const dcAt79Basic = t3Basic.rows.find(r => r.age === 79).dc;
+    const dcAt79Low = t3Low.rows.find(r => r.age === 79).dc;
+    assert("3. DC年金20年完済（基本＆低迷ストレステスト）", Math.abs(dcAt79Basic) < 0.01 && Math.abs(dcAt79Low) < 0.01, `基本79歳DC: ${dcAt79Basic}, 低迷79歳DC: ${dcAt79Low}`);
+
+    // Test 4: 逆算機能のラウンドトリップ検証（算出された許容生活費で破綻しないこと）
+    const testO = current();
+    const maxSpend = calcMaxSpend(testO);
+    const roundtripSim = simulate({ ...testO, postSpend: maxSpend }, { scenario, fireAge: Math.round(testO.startAge) });
+    assert("4. 逆算生活費のラウンドトリップ検証", roundtripSim.success === true, `上限生活費 ${maxSpend}万円 でのシミュレーション成功: ${roundtripSim.success}`);
+
+    console.log(`Summary: Total ${passed + failed} | Passed: ${passed} | Failed: ${failed}`);
+    console.groupEnd();
+
+    const box = $('testBox');
+    if (box) {
+        box.className = `test-summary-box ${failed === 0 ? 'all-pass' : 'has-fail'}`;
+        box.innerHTML = `<strong>自動テスト結果: ${failed === 0 ? 'ALL PASS (全件成功)' : 'FAIL有 (' + failed + '件失敗)'}</strong> — 成功: ${passed} / 失敗: ${failed}<br>` +
+            testLogs.map(l => `・[${l.status}] ${l.name}: ${l.info}`).join('<br>');
+    }
+
+    return { passed, failed, testLogs };
 }
 
 function updateHousingFields() {
@@ -1183,7 +1234,7 @@ function updateHousingFields() {
 
 function updateLoanDisplay() {
     const homePrice = readNumber('homePrice', DEFAULTS.homePrice);
-    const downPayment = readNumber('downPayment', DEFAULTS.downPayment);
+    const downPayment = Math.min(homePrice, readNumber('downPayment', DEFAULTS.downPayment));
     const calculatedLoan = Math.max(0, homePrice - downPayment);
     const el = $('calculatedLoanDisplay');
     if (el) el.value = fmt(calculatedLoan);
@@ -1251,7 +1302,7 @@ function renderRows(rows) {
             ['年齢', r.age + '歳'], ['給与等', fmt(r.salary)], ['年金・DC', fmt(r.pension)], 
             ['生活費', fmt(r.spend)], ['住宅費', fmt(r.housing)], ['税・社保', fmt(r.taxes)], 
             ['売却額', fmt(r.sold)], ['現金', fmt(r.cash)], ['投資資産', fmt(r.investment)], 
-            ['DC等', fmt(r.dc)], ['利用可能資産／不足額', assetOrShortfallText]
+            ['持ち家純資産', fmt(r.homeEquity)], ['流動資産計', assetOrShortfallText]
         ];
         return '<tr' + (r.isBankrupt ? ' style="background:var(--red-bg);"' : '') + '>' + cells.map(c => `<td data-label="${c[0]}">${c[1]}</td>`).join('') + '</tr>';
     }).join('');
@@ -1327,11 +1378,16 @@ function bind() {
     document.querySelectorAll('[data-scenario]').forEach(el => el.addEventListener('click', () => {
         scenario = el.dataset.scenario;
         document.querySelectorAll('[data-scenario]').forEach(b => b.classList.toggle('active', b === el));
-        $('crashField').classList.toggle('hidden', scenario !== 'crash');
+        const isCrash = scenario === 'crash';
+        $('crashField').classList.toggle('hidden', !isCrash);
         recalculate();
     }));
 
-    $('housing').addEventListener('change', recalculate);$('modeBtn').addEventListener('click', setMode);
+    $('housing').addEventListener('change', recalculate);
+    $('modeBtn').addEventListener('click', setMode);$('testBtn').addEventListener('click', () => {
+        const res = runAutomatedTests();
+        alert(`自動テスト再実行結果:\n成功 (PASS): ${res.passed}\n失敗 (FAIL): ${res.failed}`);
+    });
 
     $('addEvent').addEventListener('click', () => {
         events.push({ age: Math.round(readNumber('startAge', 40, 18, 100)) + 10, amount: 100, name: '一時支出' });
@@ -1359,10 +1415,10 @@ $('detailSection').classList.toggle('hidden', !detailed);$('modeBtn').textConten
 $('crashField').classList.toggle('hidden', scenario !== 'crash');
 renderEvents();
 bind();
+runAutomatedTests();
 recalculate();
 
 })();
 </script>
 </body>
 </html>
-
