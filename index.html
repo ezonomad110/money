@@ -45,6 +45,7 @@ button {
   border:0; border-radius:9px; padding:11px 15px;
   font-size:.95rem; font-weight:700; cursor:pointer;
 }
+button:disabled { opacity:.55; cursor:wait; }
 .primary { background:var(--blue); color:#fff; }
 .secondary { background:#e2e8f0; color:#1e293b; }
 .cards {
@@ -77,6 +78,27 @@ th:first-child,td:first-child { text-align:center; }
 .dot { width:10px; height:10px; display:inline-block; border-radius:50%; }
 canvas { display:block; width:100%; height:300px; }
 .hidden { display:none !important; }
+.probability-grid {
+  display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px;
+  margin-top:14px;
+}
+.probability-card {
+  background:#f8fafc; border:1px solid var(--line);
+  border-radius:12px; padding:13px; min-width:0;
+}
+.probability-card .label { font-size:.82rem; color:var(--muted); }
+.probability-card .value {
+  font-size:1.35rem; font-weight:800; overflow-wrap:anywhere;
+  margin-top:3px;
+}
+.progress-track {
+  height:12px; border-radius:99px; background:#e2e8f0;
+  overflow:hidden; margin-top:10px;
+}
+.progress-fill {
+  height:100%; background:#16a34a; width:0%;
+  transition:width .25s ease;
+}
 @media(max-width:720px) {
   main { padding:10px; }
   .grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
@@ -86,7 +108,7 @@ canvas { display:block; width:100%; height:300px; }
   canvas { height:260px; }
 }
 @media(max-width:390px) {
-  .grid { grid-template-columns:1fr; }
+  .grid,.probability-grid { grid-template-columns:1fr; }
 }
 </style>
 </head>
@@ -280,7 +302,44 @@ canvas { display:block; width:100%; height:300px; }
   </section>
 
   <section class="panel">
-    <h2>6. 資産推移グラフ</h2>
+    <h2>6. 確率シミュレーション（モンテカルロ法）</h2>
+    <p class="muted">
+      毎年の運用リターンをランダムに変化させ、相場の順番も含めて多数の将来パターンを試します。
+      平均利回りは「基本シナリオの運用利回り」と連動します。
+    </p>
+    <div class="grid">
+      <div class="field">
+        <label for="mcTrials">試行回数</label>
+        <select id="mcTrials">
+          <option value="1000">1,000回</option>
+          <option value="5000">5,000回</option>
+          <option value="10000" selected>10,000回</option>
+          <option value="20000">20,000回</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="mcStdDev">年次リターンの標準偏差（％）</label>
+        <input id="mcStdDev" type="number" min="0" max="100" step="1" value="15">
+      </div>
+    </div>
+    <div class="notice" style="margin-top:12px">
+      標準偏差はリターンの年ごとのブレの大きさです。たとえば平均4％・標準偏差15％なら、年によって大きなプラスやマイナスが起こる想定になります。
+      リターンは平均値が設定利回りと一致するよう調整した対数正規分布から生成します。
+    </div>
+    <div class="actions">
+      <button class="primary" id="mcRunButton">確率シミュレーションを実行</button>
+    </div>
+    <div id="mcResults" aria-live="polite" style="margin-top:16px">
+      <p class="muted">基本シミュレーションの設定を確認し、「確率シミュレーションを実行」を押してください。</p>
+    </div>
+    <p class="help">
+      結果は入力条件と確率モデルに基づく推計であり、将来の実際の確率を保証するものではありません。
+      税金・手数料・相場の構造変化なども完全には再現していません。
+    </p>
+  </section>
+
+  <section class="panel">
+    <h2>7. 資産推移グラフ</h2>
     <div class="legend">
       <span><i class="dot" style="background:#2563eb"></i>基本</span>
       <span><i class="dot" style="background:#dc2626"></i>暴落</span>
@@ -291,7 +350,7 @@ canvas { display:block; width:100%; height:300px; }
   </section>
 
   <section class="panel">
-    <h2>7. FIRE年齢を逆算</h2>
+    <h2>8. FIRE年齢を逆算</h2>
     <p class="muted">選択したシナリオで、終了年齢まで支払い不能にならない最も早いFIRE年齢を探します。</p>
     <div class="grid">
       <div class="field">
@@ -312,7 +371,7 @@ canvas { display:block; width:100%; height:300px; }
   </section>
 
   <section class="panel">
-    <h2>8. 年次資産推移</h2>
+    <h2>9. 年次資産推移</h2>
     <div class="field" style="max-width:320px;margin-bottom:12px">
       <label for="tableScenario">表示するシナリオ</label>
       <select id="tableScenario">
@@ -325,10 +384,11 @@ canvas { display:block; width:100%; height:300px; }
   </section>
 
   <section class="panel">
-    <h2>計算上の注意点</h2>
+    <h2>10. 計算上の注意点</h2>
     <ul class="help">
-      <li>将来の運用利回りは一定と仮定しており、実際の相場変動・手数料・税金を完全には再現しません。</li>
+      <li>基本・暴落・低迷シナリオは指定した条件に基づく試算です。確率シミュレーションは毎年のリターンの変動を加えます。</li>
       <li>暴落シナリオは指定年齢に一度だけ暴落率を適用します。低迷シナリオはFIRE後の指定年数に低迷利回りを適用します。</li>
+      <li>確率シミュレーションは、基本利回りを算術平均とする対数正規分布を使います。極端な相場、相関、長期の相場環境変化を完全には表現しません。</li>
       <li>給与・年金の手取り、年金の繰上げ・繰下げ率は概算です。実際の税金・社会保険料とは異なります。</li>
       <li>住宅購入時は頭金と購入諸費用を初期資産から一度だけ差し引き、ローン返済と維持費を計上します。</li>
       <li>DC・iDeCoは設定した年齢以降に取り崩せるものとして扱います。受取時の税金・受取方法による差は別途計算していません。</li>
@@ -540,8 +600,11 @@ function annualReturn(c, scenario, age, fireAge) {
  * 実際の支払いに現金が足りない場合、投資資産、次に利用可能なDCから補填。
  * それでも支払えない場合のみ資産不足として記録する。
  * 現金の目標額を確保できないことだけでは未達成としない。
+ *
+ * stochasticRates が指定された場合は、年齢ごとのランダム利回りを使用。
+ * 通常シナリオと確率シミュレーションで、年次収支計算を共用する。
  */
-function runScenario(c, scenario, fireAge) {
+function runScenario(c, scenario, fireAge, stochasticRates = null) {
   let cash = c.cash;
   let investments = c.investments;
   let dc = c.dc;
@@ -554,7 +617,6 @@ function runScenario(c, scenario, fireAge) {
   /*
    * 住宅購入時の初期費用。
    * 頭金と購入諸費用をそれぞれ一度だけ支払う。
-   * 購入諸費用は住宅価格×諸費用率。
    */
   if (c.housing === "buy") {
     const purchaseCosts =
@@ -576,7 +638,10 @@ function runScenario(c, scenario, fireAge) {
   }
 
   for (let age = c.currentAge; age <= c.lifeAge; age++) {
-    const rate = annualReturn(c, scenario, age, fireAge);
+    const index = age - c.currentAge;
+    const rate = stochasticRates
+      ? stochasticRates[index]
+      : annualReturn(c, scenario, age, fireAge);
 
     // 年初に運用益を反映
     investments = Math.max(0, investments * (1 + rate));
@@ -860,6 +925,227 @@ function drawChart(results, c, fireAge) {
   }
 }
 
+/* ---------- 確率シミュレーション ---------- */
+
+/* Box-Muller法で標準正規乱数を生成 */
+function standardNormalRandom() {
+  let u = 0;
+  let v = 0;
+
+  while (u === 0) u = Math.random();
+  while (v === 0) v = Math.random();
+
+  return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+}
+
+/*
+ * 対数正規分布から年間リターンを生成する。
+ * 入力された平均利回りは算術平均（期待リターン）として扱う。
+ * 標準偏差は単純リターンの標準偏差。
+ *
+ * grossReturn = exp(mu + sigma * Z)
+ * E[grossReturn] = 1 + meanReturn
+ *
+ * そのため、
+ * sigmaLog = sqrt(log(1 + (sd / (1 + mean))^2))
+ * muLog = log(1 + mean) - sigmaLog^2 / 2
+ */
+function randomAnnualReturn(meanReturn, standardDeviation) {
+  const meanGross = 1 + meanReturn;
+
+  if (meanGross <= 0) {
+    throw new Error("平均利回りは -100％ より大きい値にしてください。");
+  }
+
+  if (standardDeviation <= 0) {
+    return meanReturn;
+  }
+
+  const varianceRatio =
+    (standardDeviation / meanGross) ** 2;
+
+  const sigmaLog = Math.sqrt(Math.log(1 + varianceRatio));
+  const muLog = Math.log(meanGross) - (sigmaLog * sigmaLog) / 2;
+
+  const grossReturn = Math.exp(
+    muLog + sigmaLog * standardNormalRandom()
+  );
+
+  return grossReturn - 1;
+}
+
+function percentile(sortedValues, p) {
+  if (!sortedValues.length) return 0;
+
+  const index = (sortedValues.length - 1) * p;
+  const lower = Math.floor(index);
+  const upper = Math.ceil(index);
+
+  if (lower === upper) return sortedValues[lower];
+
+  const weight = index - lower;
+  return sortedValues[lower] * (1 - weight) +
+    sortedValues[upper] * weight;
+}
+
+function median(values) {
+  if (!values.length) return null;
+
+  const sorted = [...values].sort((a, b) => a - b);
+  return percentile(sorted, 0.5);
+}
+
+function runMonteCarlo(c, trialCount, standardDeviation) {
+  const terminalAssets = [];
+  const failureAges = [];
+
+  let successCount = 0;
+
+  const years = c.lifeAge - c.currentAge + 1;
+
+  for (let trial = 0; trial < trialCount; trial++) {
+    const rates = new Array(years);
+
+    for (let i = 0; i < years; i++) {
+      rates[i] = randomAnnualReturn(
+        c.baseReturn,
+        standardDeviation
+      );
+    }
+
+    /*
+     * 既存のrunScenarioを使って収支を計算。
+     * 住宅費・給与・年金・追加収入・現金補充のロジックは共通。
+     */
+    const result = runScenario(c, "basic", c.fireAge, rates);
+
+    terminalAssets.push(result.finalAssets);
+
+    if (result.success) {
+      successCount++;
+    } else if (result.firstShortageAge !== null) {
+      failureAges.push(result.firstShortageAge);
+    }
+  }
+
+  terminalAssets.sort((a, b) => a - b);
+  failureAges.sort((a, b) => a - b);
+
+  return {
+    trialCount,
+    successCount,
+    failureCount: trialCount - successCount,
+    successRate: successCount / trialCount,
+    failureRate: (trialCount - successCount) / trialCount,
+    medianFailureAge: median(failureAges),
+    terminalMedian: percentile(terminalAssets, 0.50),
+    terminalP10: percentile(terminalAssets, 0.10),
+    terminalP5: percentile(terminalAssets, 0.05),
+    standardDeviation
+  };
+}
+
+function renderMonteCarlo(result) {
+  const successPct = (result.successRate * 100).toFixed(1);
+  const failurePct = (result.failureRate * 100).toFixed(1);
+
+  const medianFailureText = result.medianFailureAge === null
+    ? "資産不足なし"
+    : Math.round(result.medianFailureAge) + "歳";
+
+  $("mcResults").innerHTML = `
+    <div class="notice">
+      <strong>${result.trialCount.toLocaleString("ja-JP")}回の試行結果</strong><br>
+      平均利回り：${(num("baseReturn")).toFixed(1)}％／年　
+      標準偏差：${(result.standardDeviation * 100).toFixed(1)}％／年
+    </div>
+
+    <div class="probability-card" style="margin-top:12px">
+      <div class="label">終了年齢まで資産が尽きない確率</div>
+      <div class="value">${successPct}％</div>
+      <div class="progress-track">
+        <div class="progress-fill" style="width:${successPct}%"></div>
+      </div>
+      <div class="result-line">
+        達成：${result.successCount.toLocaleString("ja-JP")}回 ／
+        未達成：${result.failureCount.toLocaleString("ja-JP")}回
+      </div>
+    </div>
+
+    <div class="probability-grid">
+      <div class="probability-card">
+        <div class="label">資産不足になる確率</div>
+        <div class="value">${failurePct}％</div>
+      </div>
+      <div class="probability-card">
+        <div class="label">資産不足が起きた年齢の中央値</div>
+        <div class="value">${medianFailureText}</div>
+      </div>
+      <div class="probability-card">
+        <div class="label">終了年齢時点の資産・中央値</div>
+        <div class="value">${money(result.terminalMedian)}</div>
+      </div>
+      <div class="probability-card">
+        <div class="label">終了年齢時点の資産・下位10％</div>
+        <div class="value">${money(result.terminalP10)}</div>
+      </div>
+      <div class="probability-card">
+        <div class="label">終了年齢時点の資産・下位5％</div>
+        <div class="value">${money(result.terminalP5)}</div>
+      </div>
+      <div class="probability-card">
+        <div class="label">終了年齢</div>
+        <div class="value">${num("lifeAge")}歳</div>
+      </div>
+    </div>
+
+    <p class="help" style="margin-top:12px">
+      「下位5％」は、試行結果を資産額の低い順に並べたときの5パーセンタイルです。
+      終了時点の資産額は、資産不足が発生した試行も含めて集計しています。
+      一度でも支払い不能になった試行は、後年に資産が回復しても未達成として数えます。
+    </p>
+  `;
+}
+
+function runMonteCarloAndRender() {
+  const c = readConfig();
+
+  if (!validateConfig(c)) return;
+
+  const trials = Math.round(clamp(num("mcTrials"), 1000, 20000));
+  const standardDeviation = Math.max(0, num("mcStdDev") / 100);
+
+  if (c.baseReturn <= -1) {
+    alert("確率シミュレーションでは平均利回りを -100％ より大きい値にしてください。");
+    return;
+  }
+
+  if (standardDeviation > 1) {
+    alert("標準偏差は100％以下で指定してください。");
+    return;
+  }
+
+  const button = $("mcRunButton");
+  button.disabled = true;
+  button.textContent = "計算中…";
+
+  // 描画更新の機会を作ってから計算を開始
+  setTimeout(() => {
+    try {
+      const result = runMonteCarlo(c, trials, standardDeviation);
+      renderMonteCarlo(result);
+    } catch (error) {
+      $("mcResults").innerHTML =
+        `<p class="muted">計算できませんでした：${error.message}</p>`;
+    } finally {
+      button.disabled = false;
+      button.textContent = "確率シミュレーションを実行";
+    }
+  }, 20);
+}
+
+/* ---------- 通常シミュレーション ---------- */
+
 let lastConfig = null;
 let lastResults = null;
 
@@ -902,6 +1188,9 @@ function runAndRender() {
   $("reverseResult").textContent =
     "現在の設定では、" + c.fireAge +
     "歳でFIREした場合の結果を表示しています。";
+
+  $("mcResults").innerHTML =
+    '<p class="muted">設定が更新されました。新しい条件で「確率シミュレーションを実行」を押してください。</p>';
 }
 
 function reverseFireAge() {
@@ -938,6 +1227,9 @@ function reverseFireAge() {
   renderSummary(lastResults);
   renderTable(lastResults);
   drawChart(lastResults, updatedConfig, foundAge);
+
+  $("mcResults").innerHTML =
+    '<p class="muted">FIRE年齢が更新されました。新しい条件で確率シミュレーションを再実行してください。</p>';
 
   $("reverseResult").innerHTML = `
     <div><strong>${SCENARIOS[scenario].name}での最短FIRE年齢：${foundAge}歳</strong></div>
@@ -988,7 +1280,10 @@ function resetDefaults() {
 
     lowYears:5,
     lowReturn:0,
-    lowAfterReturn:4
+    lowAfterReturn:4,
+
+    mcStdDev:15,
+    mcTrials:10000
   };
 
   for (const [id, value] of Object.entries(defaults)) {
@@ -1006,6 +1301,7 @@ function resetDefaults() {
 $("runButton").addEventListener("click", runAndRender);
 $("resetButton").addEventListener("click", resetDefaults);
 $("reverseButton").addEventListener("click", reverseFireAge);
+$("mcRunButton").addEventListener("click", runMonteCarloAndRender);
 
 $("tableScenario").addEventListener("change", () => {
   if (lastResults) renderTable(lastResults);
