@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -315,8 +314,57 @@ canvas { display:block; width:100%; height:300px; }
     <div id="summary" style="margin-top:16px"></div>
   </section>
 
+  <!-- 6. FIRE年齢を逆算 -->
   <section class="panel">
-    <h2>6. 確率シミュレーション（モンテカルロ法）</h2>
+    <h2>6. FIRE年齢を逆算</h2>
+    <p class="muted">選択したシナリオで、終了年齢まで支払い不能にならない最も早いFIRE年齢を探します。</p>
+    <div class="grid">
+      <div class="field">
+        <label for="reverseScenario">逆算に使うシナリオ</label>
+        <select id="reverseScenario">
+          <option value="basic">基本シナリオ</option>
+          <option value="crash">暴落シナリオ</option>
+          <option value="low">低迷シナリオ</option>
+        </select>
+      </div>
+    </div>
+    <div class="actions">
+      <button class="primary" id="reverseButton">FIRE年齢を逆算</button>
+    </div>
+    <div id="reverseResult" class="reverse-result" aria-live="polite">
+      逆算を実行すると、選択したシナリオでの最短FIRE年齢を表示します。
+    </div>
+  </section>
+
+  <!-- 7. シナリオ別資産推移グラフ -->
+  <section class="panel">
+    <h2>7. シナリオ別・資産推移グラフ</h2>
+    <div class="legend">
+      <span><i class="dot" style="background:#2563eb"></i>基本</span>
+      <span><i class="dot" style="background:#dc2626"></i>暴落</span>
+      <span><i class="dot" style="background:#16a34a"></i>低迷</span>
+    </div>
+    <canvas id="assetChart"></canvas>
+    <p class="help">現金・投資資産・DCを合算した資産総額を表示します。FIRE年齢は縦線で示します。</p>
+  </section>
+
+  <!-- 8. 年次資産推移 -->
+  <section class="panel">
+    <h2>8. 年次資産推移</h2>
+    <div class="field" style="max-width:320px;margin-bottom:12px">
+      <label for="tableScenario">表示するシナリオ</label>
+      <select id="tableScenario">
+        <option value="basic">基本シナリオ</option>
+        <option value="crash">暴落シナリオ</option>
+        <option value="low">低迷シナリオ</option>
+      </select>
+    </div>
+    <div id="annualTable" class="table-wrap"></div>
+  </section>
+
+  <!-- 9. モンテカルロ設定・結果 -->
+  <section class="panel">
+    <h2>9. 確率シミュレーション（モンテカルロ法）</h2>
     <p class="muted">
       毎年の運用リターンをランダムに変化させ、相場の順番も含めて多数の将来パターンを試します。
       平均利回りは「基本シナリオの運用利回り」と連動します。
@@ -359,51 +407,7 @@ canvas { display:block; width:100%; height:300px; }
     </p>
   </section>
 
-  <section class="panel">
-    <h2>7. シナリオ別・資産推移グラフ</h2>
-    <div class="legend">
-      <span><i class="dot" style="background:#2563eb"></i>基本</span>
-      <span><i class="dot" style="background:#dc2626"></i>暴落</span>
-      <span><i class="dot" style="background:#16a34a"></i>低迷</span>
-    </div>
-    <canvas id="assetChart"></canvas>
-    <p class="help">現金・投資資産・DCを合算した資産総額を表示します。FIRE年齢は縦線で示します。</p>
-  </section>
-
-  <section class="panel">
-    <h2>8. FIRE年齢を逆算</h2>
-    <p class="muted">選択したシナリオで、終了年齢まで支払い不能にならない最も早いFIRE年齢を探します。</p>
-    <div class="grid">
-      <div class="field">
-        <label for="reverseScenario">逆算に使うシナリオ</label>
-        <select id="reverseScenario">
-          <option value="basic">基本シナリオ</option>
-          <option value="crash">暴落シナリオ</option>
-          <option value="low">低迷シナリオ</option>
-        </select>
-      </div>
-    </div>
-    <div class="actions">
-      <button class="primary" id="reverseButton">FIRE年齢を逆算</button>
-    </div>
-    <div id="reverseResult" class="reverse-result" aria-live="polite">
-      逆算を実行すると、選択したシナリオでの最短FIRE年齢を表示します。
-    </div>
-  </section>
-
-  <section class="panel">
-    <h2>9. 年次資産推移</h2>
-    <div class="field" style="max-width:320px;margin-bottom:12px">
-      <label for="tableScenario">表示するシナリオ</label>
-      <select id="tableScenario">
-        <option value="basic">基本シナリオ</option>
-        <option value="crash">暴落シナリオ</option>
-        <option value="low">低迷シナリオ</option>
-      </select>
-    </div>
-    <div id="annualTable" class="table-wrap"></div>
-  </section>
-
+  <!-- 10. モンテカルロ分布グラフ -->
   <section class="panel">
     <h2>10. モンテカルロ・資産推移の分布</h2>
     <p class="muted">
@@ -421,6 +425,7 @@ canvas { display:block; width:100%; height:300px; }
     </p>
   </section>
 
+  <!-- 11. 計算上の注意点 -->
   <section class="panel">
     <h2>11. 計算上の注意点</h2>
     <ul class="help">
@@ -1279,6 +1284,10 @@ function runMonteCarloAndRender() {
   setTimeout(() => {
     try {
       const result = runMonteCarlo(c, trials, standardDeviation);
+
+      // 計算結果を保存し、画面サイズ変更時の再描画に利用する
+      lastMonteCarloResult = result;
+
       renderMonteCarlo(result);
     } catch (error) {
       $("mcResults").innerHTML =
@@ -1491,6 +1500,7 @@ window.addEventListener("resize", () => {
     drawChart(lastResults, lastConfig, lastConfig.fireAge);
   }
 
+  // 保存済みのモンテカルロ結果から分布グラフを再描画
   if (lastMonteCarloResult) {
     drawMonteCarloChart(lastMonteCarloResult.distribution);
   } else {
