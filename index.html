@@ -99,6 +99,20 @@ canvas { display:block; width:100%; height:300px; }
   height:100%; background:#16a34a; width:0%;
   transition:width .25s ease;
 }
+.mc-legend {
+  display:flex; flex-wrap:wrap; gap:12px;
+  font-size:.82rem; margin:8px 0 4px;
+}
+.mc-legend span { display:flex; align-items:center; gap:5px; }
+.mc-line {
+  display:inline-block; width:22px; height:3px;
+  border-radius:2px; background:#2563eb;
+}
+.mc-band {
+  display:inline-block; width:22px; height:12px;
+  border-radius:3px; background:rgba(37,99,235,.18);
+  border:1px solid rgba(37,99,235,.35);
+}
 @media(max-width:720px) {
   main { padding:10px; }
   .grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
@@ -322,6 +336,13 @@ canvas { display:block; width:100%; height:300px; }
         <input id="mcStdDev" type="number" min="0" max="100" step="1" value="15">
       </div>
     </div>
+    <p class="help" style="color:#9ca3af;margin-top:8px">
+      標準偏差の目安（年率）<br>
+      ・債券・現金を多く含む安定運用：5〜10％<br>
+      ・株式と債券を組み合わせた運用：8〜12％程度<br>
+      ・全世界株式・米国株式など株式中心：15〜20％程度<br>
+      ・個別株に大きく集中した運用：25〜40％以上もあり得る
+    </p>
     <div class="notice" style="margin-top:12px">
       標準偏差はリターンの年ごとのブレの大きさです。たとえば平均4％・標準偏差15％なら、年によって大きなプラスやマイナスが起こる想定になります。
       リターンは平均値が設定利回りと一致するよう調整した対数正規分布から生成します。
@@ -339,7 +360,7 @@ canvas { display:block; width:100%; height:300px; }
   </section>
 
   <section class="panel">
-    <h2>7. 資産推移グラフ</h2>
+    <h2>7. シナリオ別・資産推移グラフ</h2>
     <div class="legend">
       <span><i class="dot" style="background:#2563eb"></i>基本</span>
       <span><i class="dot" style="background:#dc2626"></i>暴落</span>
@@ -384,7 +405,24 @@ canvas { display:block; width:100%; height:300px; }
   </section>
 
   <section class="panel">
-    <h2>10. 計算上の注意点</h2>
+    <h2>10. モンテカルロ・資産推移の分布</h2>
+    <p class="muted">
+      多数の試行から、各年齢時点の資産額の分布を表示します。
+      中央値は試行の半分が上回り、半分が下回る資産額です。
+      帯は下位10％から上位90％までの範囲を表します。
+    </p>
+    <div class="mc-legend">
+      <span><i class="mc-line"></i>中央値</span>
+      <span><i class="mc-band"></i>下位10％〜上位90％</span>
+    </div>
+    <canvas id="mcChart"></canvas>
+    <p id="mcChartHelp" class="help">
+      先に「確率シミュレーションを実行」を押すと、資産推移の分布が表示されます。
+    </p>
+  </section>
+
+  <section class="panel">
+    <h2>11. 計算上の注意点</h2>
     <ul class="help">
       <li>基本・暴落・低迷シナリオは指定した条件に基づく試算です。確率シミュレーションは毎年のリターンの変動を加えます。</li>
       <li>暴落シナリオは指定年齢に一度だけ暴落率を適用します。低迷シナリオはFIRE後の指定年数に低迷利回りを適用します。</li>
@@ -602,7 +640,6 @@ function annualReturn(c, scenario, age, fireAge) {
  * 現金の目標額を確保できないことだけでは未達成としない。
  *
  * stochasticRates が指定された場合は、年齢ごとのランダム利回りを使用。
- * 通常シナリオと確率シミュレーションで、年次収支計算を共用する。
  */
 function runScenario(c, scenario, fireAge, stochasticRates = null) {
   let cash = c.cash;
@@ -614,10 +651,6 @@ function runScenario(c, scenario, fireAge, stochasticRates = null) {
   let initialShortage = 0;
   const rows = [];
 
-  /*
-   * 住宅購入時の初期費用。
-   * 頭金と購入諸費用をそれぞれ一度だけ支払う。
-   */
   if (c.housing === "buy") {
     const purchaseCosts =
       c.downPayment + c.homePrice * c.purchaseCostPct;
@@ -667,7 +700,6 @@ function runScenario(c, scenario, fireAge, stochasticRates = null) {
 
     let shortageThisYear = 0;
 
-    // 支出の支払いに現金が不足した場合
     if (cash < 0) {
       let need = -cash;
 
@@ -941,14 +973,6 @@ function standardNormalRandom() {
 /*
  * 対数正規分布から年間リターンを生成する。
  * 入力された平均利回りは算術平均（期待リターン）として扱う。
- * 標準偏差は単純リターンの標準偏差。
- *
- * grossReturn = exp(mu + sigma * Z)
- * E[grossReturn] = 1 + meanReturn
- *
- * そのため、
- * sigmaLog = sqrt(log(1 + (sd / (1 + mean))^2))
- * muLog = log(1 + mean) - sigmaLog^2 / 2
  */
 function randomAnnualReturn(meanReturn, standardDeviation) {
   const meanGross = 1 + meanReturn;
@@ -961,9 +985,7 @@ function randomAnnualReturn(meanReturn, standardDeviation) {
     return meanReturn;
   }
 
-  const varianceRatio =
-    (standardDeviation / meanGross) ** 2;
-
+  const varianceRatio = (standardDeviation / meanGross) ** 2;
   const sigmaLog = Math.sqrt(Math.log(1 + varianceRatio));
   const muLog = Math.log(meanGross) - (sigmaLog * sigmaLog) / 2;
 
@@ -995,28 +1017,25 @@ function median(values) {
   return percentile(sorted, 0.5);
 }
 
+/*
+ * モンテカルロ試行ごとに通常シミュレーションと同じ収支計算を行う。
+ * 各年齢時点の資産分布も集計し、グラフ用のパーセンタイルを返す。
+ */
 function runMonteCarlo(c, trialCount, standardDeviation) {
   const terminalAssets = [];
   const failureAges = [];
+  const years = c.lifeAge - c.currentAge + 1;
+  const assetsByAge = Array.from({ length: years }, () => []);
 
   let successCount = 0;
-
-  const years = c.lifeAge - c.currentAge + 1;
 
   for (let trial = 0; trial < trialCount; trial++) {
     const rates = new Array(years);
 
     for (let i = 0; i < years; i++) {
-      rates[i] = randomAnnualReturn(
-        c.baseReturn,
-        standardDeviation
-      );
+      rates[i] = randomAnnualReturn(c.baseReturn, standardDeviation);
     }
 
-    /*
-     * 既存のrunScenarioを使って収支を計算。
-     * 住宅費・給与・年金・追加収入・現金補充のロジックは共通。
-     */
     const result = runScenario(c, "basic", c.fireAge, rates);
 
     terminalAssets.push(result.finalAssets);
@@ -1026,10 +1045,25 @@ function runMonteCarlo(c, trialCount, standardDeviation) {
     } else if (result.firstShortageAge !== null) {
       failureAges.push(result.firstShortageAge);
     }
+
+    result.rows.forEach((row, index) => {
+      assetsByAge[index].push(row.totalAssets);
+    });
   }
 
   terminalAssets.sort((a, b) => a - b);
   failureAges.sort((a, b) => a - b);
+
+  const distribution = assetsByAge.map((values, index) => {
+    values.sort((a, b) => a - b);
+
+    return {
+      age: c.currentAge + index,
+      p10: percentile(values, 0.10),
+      median: percentile(values, 0.50),
+      p90: percentile(values, 0.90)
+    };
+  });
 
   return {
     trialCount,
@@ -1041,7 +1075,8 @@ function runMonteCarlo(c, trialCount, standardDeviation) {
     terminalMedian: percentile(terminalAssets, 0.50),
     terminalP10: percentile(terminalAssets, 0.10),
     terminalP5: percentile(terminalAssets, 0.05),
-    standardDeviation
+    standardDeviation,
+    distribution
   };
 }
 
@@ -1056,7 +1091,7 @@ function renderMonteCarlo(result) {
   $("mcResults").innerHTML = `
     <div class="notice">
       <strong>${result.trialCount.toLocaleString("ja-JP")}回の試行結果</strong><br>
-      平均利回り：${(num("baseReturn")).toFixed(1)}％／年　
+      平均利回り：${num("baseReturn").toFixed(1)}％／年　
       標準偏差：${(result.standardDeviation * 100).toFixed(1)}％／年
     </div>
 
@@ -1105,6 +1140,118 @@ function renderMonteCarlo(result) {
       一度でも支払い不能になった試行は、後年に資産が回復しても未達成として数えます。
     </p>
   `;
+
+  drawMonteCarloChart(result.distribution);
+}
+
+function drawMonteCarloChart(distribution) {
+  const canvas = $("mcChart");
+  if (!canvas || !distribution || !distribution.length) return;
+
+  const ctx = canvas.getContext("2d");
+  const rect = canvas.getBoundingClientRect();
+  const dpr = window.devicePixelRatio || 1;
+
+  canvas.width = Math.max(1, Math.round(rect.width * dpr));
+  canvas.height = Math.max(1, Math.round(rect.height * dpr));
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+  const w = rect.width;
+  const h = rect.height;
+  ctx.clearRect(0, 0, w, h);
+
+  const pad = { left:64, right:14, top:18, bottom:34 };
+  const plotW = Math.max(1, w - pad.left - pad.right);
+  const plotH = Math.max(1, h - pad.top - pad.bottom);
+
+  const minAge = distribution[0].age;
+  const maxAge = distribution[distribution.length - 1].age;
+  const maxValue = Math.max(
+    1,
+    ...distribution.map(d => d.p90),
+    ...distribution.map(d => d.median)
+  );
+  const yMax = maxValue * 1.08;
+
+  const x = age => pad.left +
+    (maxAge === minAge ? 0 : (age - minAge) / (maxAge - minAge)) * plotW;
+
+  const y = value => pad.top + plotH - (value / yMax) * plotH;
+
+  ctx.font = "11px sans-serif";
+  ctx.lineWidth = 1;
+  ctx.strokeStyle = "#e2e8f0";
+  ctx.fillStyle = "#64748b";
+
+  for (let i = 0; i <= 4; i++) {
+    const value = yMax * i / 4;
+    const yy = y(value);
+
+    ctx.beginPath();
+    ctx.moveTo(pad.left, yy);
+    ctx.lineTo(w - pad.right, yy);
+    ctx.stroke();
+
+    const label = value >= 10000
+      ? (value / 10000).toFixed(1) + "億"
+      : Math.round(value).toLocaleString("ja-JP");
+
+    ctx.textAlign = "right";
+    ctx.fillText(label, pad.left - 7, yy + 4);
+  }
+
+  const ageStep = Math.max(5, Math.ceil((maxAge - minAge) / 8 / 5) * 5);
+  for (let age = Math.ceil(minAge / ageStep) * ageStep; age <= maxAge; age += ageStep) {
+    ctx.textAlign = "center";
+    ctx.fillText(String(age), x(age), h - 10);
+  }
+
+  // 下位10％〜上位90％の範囲を帯として描く
+  ctx.beginPath();
+  distribution.forEach((d, index) => {
+    if (index === 0) ctx.moveTo(x(d.age), y(d.p90));
+    else ctx.lineTo(x(d.age), y(d.p90));
+  });
+
+  for (let i = distribution.length - 1; i >= 0; i--) {
+    const d = distribution[i];
+    ctx.lineTo(x(d.age), y(d.p10));
+  }
+
+  ctx.closePath();
+  ctx.fillStyle = "rgba(37,99,235,0.16)";
+  ctx.fill();
+
+  // 中央値の線
+  ctx.beginPath();
+  distribution.forEach((d, index) => {
+    if (index === 0) ctx.moveTo(x(d.age), y(d.median));
+    else ctx.lineTo(x(d.age), y(d.median));
+  });
+  ctx.strokeStyle = "#2563eb";
+  ctx.lineWidth = 2.5;
+  ctx.stroke();
+
+  // FIRE年齢の縦線
+  const fireAge = clamp(num("fireAge"), minAge, maxAge);
+  const fireX = x(fireAge);
+
+  ctx.save();
+  ctx.setLineDash([5, 4]);
+  ctx.strokeStyle = "#64748b";
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(fireX, pad.top);
+  ctx.lineTo(fireX, pad.top + plotH);
+  ctx.stroke();
+  ctx.restore();
+
+  ctx.textAlign = "left";
+  ctx.fillStyle = "#475569";
+  ctx.fillText("FIRE " + fireAge + "歳", Math.min(fireX + 4, w - 75), pad.top + 12);
+
+  $("mcChartHelp").textContent =
+    "試行回数：" + $("mcTrials").value + "回。帯は各年齢の資産額の下位10％〜上位90％、青線は中央値です。金額は万円単位です。";
 }
 
 function runMonteCarloAndRender() {
@@ -1129,7 +1276,6 @@ function runMonteCarloAndRender() {
   button.disabled = true;
   button.textContent = "計算中…";
 
-  // 描画更新の機会を作ってから計算を開始
   setTimeout(() => {
     try {
       const result = runMonteCarlo(c, trials, standardDeviation);
@@ -1148,6 +1294,7 @@ function runMonteCarloAndRender() {
 
 let lastConfig = null;
 let lastResults = null;
+let lastMonteCarloResult = null;
 
 function updateHousingFields() {
   const rent = selectedHousing() === "rent";
@@ -1191,6 +1338,29 @@ function runAndRender() {
 
   $("mcResults").innerHTML =
     '<p class="muted">設定が更新されました。新しい条件で「確率シミュレーションを実行」を押してください。</p>';
+
+  lastMonteCarloResult = null;
+  $("mcChartHelp").textContent =
+    "設定が更新されました。新しい条件で確率シミュレーションを再実行してください。";
+  drawEmptyMonteCarloChart();
+}
+
+function drawEmptyMonteCarloChart() {
+  const canvas = $("mcChart");
+  const ctx = canvas.getContext("2d");
+  const rect = canvas.getBoundingClientRect();
+  const dpr = window.devicePixelRatio || 1;
+
+  canvas.width = Math.max(1, Math.round(rect.width * dpr));
+  canvas.height = Math.max(1, Math.round(rect.height * dpr));
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, rect.width, rect.height);
+
+  ctx.fillStyle = "#94a3b8";
+  ctx.font = "13px sans-serif";
+  ctx.textAlign = "center";
+  ctx.fillText("確率シミュレーションを実行すると、ここにグラフが表示されます。",
+    rect.width / 2, rect.height / 2);
 }
 
 function reverseFireAge() {
@@ -1230,6 +1400,11 @@ function reverseFireAge() {
 
   $("mcResults").innerHTML =
     '<p class="muted">FIRE年齢が更新されました。新しい条件で確率シミュレーションを再実行してください。</p>';
+
+  lastMonteCarloResult = null;
+  $("mcChartHelp").textContent =
+    "FIRE年齢が更新されました。新しい条件で確率シミュレーションを再実行してください。";
+  drawEmptyMonteCarloChart();
 
   $("reverseResult").innerHTML = `
     <div><strong>${SCENARIOS[scenario].name}での最短FIRE年齢：${foundAge}歳</strong></div>
@@ -1314,6 +1489,12 @@ document.querySelectorAll('input[name="housing"]').forEach(input => {
 window.addEventListener("resize", () => {
   if (lastResults && lastConfig) {
     drawChart(lastResults, lastConfig, lastConfig.fireAge);
+  }
+
+  if (lastMonteCarloResult) {
+    drawMonteCarloChart(lastMonteCarloResult.distribution);
+  } else {
+    drawEmptyMonteCarloChart();
   }
 });
 
