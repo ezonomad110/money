@@ -3,627 +3,819 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>FIREシミュレーター</title>
 <style>
-:root{--bg:#f4f6fb;--card:#fff;--text:#172033;--muted:#64748b;--line:#dce3ee;--blue:#2563eb;--green:#15803d;--red:#dc2626;--amber:#b45309}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Noto Sans JP",sans-serif;line-height:1.55}
-main{max-width:1200px;margin:auto;padding:18px}
-h1{font-size:1.7rem;margin:0 0 4px}
-h2{font-size:1.15rem;margin:0 0 14px}
-.sub{color:var(--muted);font-size:.9rem;margin-bottom:18px}
-.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin:14px 0;box-shadow:0 2px 8px #17203308}
-.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
-.field{min-width:0}
-.field label{display:block;font-size:.88rem;font-weight:650;margin-bottom:5px}
-.field input,.field select{width:100%;min-width:0;padding:10px;border:1px solid #cbd5e1;border-radius:8px;background:#fff;font:inherit;color:inherit}
-.help{font-size:.78rem;color:var(--muted);margin-top:4px}
-.unit{font-size:.78rem;color:var(--muted);font-weight:400}
-.choice{display:flex;gap:10px;flex-wrap:wrap}
-.choice label{display:flex;align-items:center;gap:6px;border:1px solid var(--line);padding:8px 12px;border-radius:9px;font-weight:500}
-button{border:0;border-radius:10px;background:var(--blue);color:white;font-weight:750;padding:12px 16px;font:inherit;cursor:pointer}
-button.secondary{background:#e2e8f0;color:#172033}
-button:hover{filter:brightness(.96)}
-.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
-.results{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
-.result{padding:14px;border:1px solid var(--line);border-radius:12px}
-.result .name{font-weight:750}
-.big{font-size:1.35rem;font-weight:800;margin:4px 0}
-.muted{color:var(--muted);font-size:.84rem}
-.status{font-weight:800}
-.ok{color:var(--green)}
-.ng{color:var(--red)}
-.warn{color:var(--amber)}
-.chart-wrap{width:100%;overflow:hidden}
-canvas{display:block;width:100%;height:340px;border:1px solid var(--line);border-radius:10px;background:#fff}
-.table-wrap{overflow-x:auto;max-width:100%}
-table{border-collapse:collapse;width:100%;font-size:.82rem;white-space:nowrap}
-th,td{padding:8px 9px;border-bottom:1px solid var(--line);text-align:right}
-th{background:#f1f5f9;position:sticky;top:0}
-th:first-child,td:first-child{text-align:center}
-.scenario-inputs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
-.hidden{display:none!important}
-.note{font-size:.82rem;color:var(--muted)}
-@media(max-width:760px){
-  main{padding:10px}
-  .grid,.results,.scenario-inputs{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .panel{padding:12px}
-  h1{font-size:1.4rem}
-  canvas{height:280px}
-  .big{font-size:1.15rem}
+:root {
+  --bg:#f3f5f9; --card:#fff; --text:#202938; --muted:#64748b;
+  --line:#dce2eb; --blue:#2563eb; --green:#15803d; --red:#dc2626;
 }
-@media(max-width:430px){
-  .grid,.results,.scenario-inputs{grid-template-columns:1fr}
-  .actions button{width:100%}
+* { box-sizing:border-box; }
+body {
+  margin:0; background:var(--bg); color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans JP",sans-serif;
+  line-height:1.55;
+}
+main { max-width:1120px; margin:auto; padding:16px; }
+h1 { font-size:1.65rem; margin:4px 0; }
+h2 { font-size:1.15rem; margin:0 0 14px; }
+h3 { font-size:1rem; margin:0 0 8px; }
+p { margin:6px 0 12px; }
+.muted,.help { color:var(--muted); font-size:.86rem; }
+.panel {
+  background:var(--card); border:1px solid var(--line);
+  border-radius:14px; padding:16px; margin:14px 0;
+}
+.grid {
+  display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px;
+}
+.field { min-width:0; }
+.field label { display:block; font-size:.85rem; margin-bottom:4px; }
+.field input,.field select,.selector {
+  width:100%; min-width:0; padding:9px 10px;
+  border:1px solid #cbd5e1; border-radius:8px;
+  background:white; color:var(--text); font-size:16px;
+}
+.unit { color:var(--muted); font-size:.76rem; }
+.section-title { margin:20px 0 10px; font-weight:700; }
+.radio-row { display:flex; flex-wrap:wrap; gap:14px; margin:8px 0; }
+.radio-row label { display:flex; align-items:center; gap:6px; }
+.radio-row input { width:auto; }
+.actions { display:flex; flex-wrap:wrap; gap:8px; margin-top:16px; }
+button {
+  border:0; border-radius:9px; padding:11px 15px;
+  font-size:.95rem; font-weight:700; cursor:pointer;
+}
+.primary { background:var(--blue); color:#fff; }
+.secondary { background:#e2e8f0; color:#1e293b; }
+button:active { transform:translateY(1px); }
+.cards {
+  display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px;
+}
+.result-card {
+  border:1px solid var(--line); border-radius:12px; padding:12px;
+  min-width:0; background:#fff;
+}
+.result-card h3 { font-size:.95rem; }
+.big-number { font-size:1.25rem; font-weight:800; overflow-wrap:anywhere; }
+.status { display:inline-block; padding:3px 8px; border-radius:6px; font-size:.8rem; font-weight:700; }
+.ok { background:#dcfce7; color:#166534; }
+.ng { background:#fee2e2; color:#991b1b; }
+.neutral { background:#e2e8f0; color:#334155; }
+.result-line { margin-top:8px; font-size:.86rem; }
+.table-wrap { width:100%; overflow-x:auto; }
+table { border-collapse:collapse; width:100%; font-size:.83rem; }
+th,td { border-bottom:1px solid var(--line); padding:8px 7px; text-align:right; white-space:nowrap; }
+th { background:#f8fafc; font-weight:700; }
+th:first-child,td:first-child { text-align:center; }
+.chart-wrap { position:relative; width:100%; }
+canvas { display:block; width:100%; height:300px; }
+.legend { display:flex; flex-wrap:wrap; gap:12px; font-size:.82rem; }
+.legend span { display:flex; align-items:center; gap:5px; }
+.dot { width:10px; height:10px; display:inline-block; border-radius:50%; }
+.reverse-result { margin-top:12px; padding:12px; background:#f8fafc; border-radius:10px; }
+.notice { background:#eff6ff; border-radius:9px; padding:10px 12px; font-size:.85rem; }
+.hidden { display:none !important; }
+@media(max-width:720px) {
+  main { padding:10px; }
+  .grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
+  .cards { grid-template-columns:1fr; }
+  .panel { padding:13px; }
+  h1 { font-size:1.4rem; }
+  canvas { height:260px; }
+}
+@media(max-width:390px) {
+  .grid { grid-template-columns:1fr; }
 }
 </style>
 </head>
 <body>
 <main>
-  <h1>FIREシミュレーター</h1>
-  <div class="sub">資産・収入・支出を入力して、基本／暴落／低迷の3シナリオで将来を試算します。金額はすべて万円単位です。</div>
+  <header>
+    <h1>FIREシミュレーター</h1>
+    <p class="muted">資産・収入・生活費・住宅費をもとに、FIRE後の資産推移と資産不足リスクを試算します。</p>
+  </header>
 
   <section class="panel">
-    <h2>基本条件</h2>
+    <h2>1. 基本設定</h2>
     <div class="grid">
-      <div class="field"><label for="currentAge">現在の年齢</label><input id="currentAge" type="number" min="18" max="100" value="40"></div>
-      <div class="field"><label for="fireAge">FIRE予定年齢</label><input id="fireAge" type="number" min="18" max="100" value="45"></div>
-      <div class="field"><label for="lifeAge">寿命（予定）</label><input id="lifeAge" type="number" min="50" max="120" value="90"></div>
-      <div class="field"><label for="cash">現金・預金 <span class="unit">万円</span></label><input id="cash" type="number" min="0" step="10" value="500"></div>
-      <div class="field"><label for="investments">投資資産合計 <span class="unit">万円</span></label><input id="investments" type="number" min="0" step="10" value="500"></div>
-      <div class="field"><label for="dc">DC・iDeCo残高 <span class="unit">万円</span></label><input id="dc" type="number" min="0" step="10" value="300"></div>
-      <div class="field"><label for="dcAge">DC・iDeCoを使える年齢</label><input id="dcAge" type="number" min="50" max="80" value="60"></div>
-      <div class="field"><label for="salary">現在の額面収入 <span class="unit">万円／年</span></label><input id="salary" type="number" min="0" step="10" value="500"></div>
-      <div class="field"><label for="pension65">年金額（65歳開始時の額面） <span class="unit">万円／年</span></label><input id="pension65" type="number" min="0" step="5" value="150"></div>
-      <div class="field"><label for="pensionAge">年金受給開始年齢</label><input id="pensionAge" type="number" min="60" max="75" value="65"></div>
-      <div class="field"><label for="preLiving">FIRE前の年間生活費 <span class="unit">万円／年</span></label><input id="preLiving" type="number" min="0" step="10" value="300"></div>
-      <div class="field"><label for="postLiving">FIRE後の年間生活費 <span class="unit">万円／年</span></label><input id="postLiving" type="number" min="0" step="10" value="300"></div>
-      <div class="field"><label for="inflation">インフレ率 <span class="unit">%／年</span></label><input id="inflation" type="number" min="-5" max="20" step="0.1" value="2"></div>
+      <div class="field">
+        <label for="currentAge">現在の年齢</label>
+        <input id="currentAge" type="number" min="18" max="100" value="44">
+      </div>
+      <div class="field">
+        <label for="fireAge">FIREする年齢</label>
+        <input id="fireAge" type="number" min="18" max="100" value="44">
+      </div>
+      <div class="field">
+        <label for="lifeAge">シミュレーション終了年齢</label>
+        <input id="lifeAge" type="number" min="40" max="120" value="95">
+      </div>
+      <div class="field">
+        <label for="cash">現在の現金（万円）</label>
+        <input id="cash" type="number" min="0" value="3000">
+      </div>
+      <div class="field">
+        <label for="investments">現在の投資資産（万円）</label>
+        <input id="investments" type="number" min="0" value="13000">
+      </div>
+      <div class="field">
+        <label for="dc">DC・iDeCo資産（万円）</label>
+        <input id="dc" type="number" min="0" value="850">
+      </div>
+      <div class="field">
+        <label for="dcAge">DC・iDeCoを使い始める年齢</label>
+        <input id="dcAge" type="number" min="40" max="100" value="60">
+      </div>
+      <div class="field">
+        <label for="inflation">生活費・年金のインフレ率（年％）</label>
+        <input id="inflation" type="number" step="0.1" value="2">
+      </div>
+      <div class="field">
+        <label for="baseReturn">基本シナリオの運用利回り（年％）</label>
+        <input id="baseReturn" type="number" step="0.1" value="4">
+      </div>
     </div>
-    <div class="help">投資資産は、現在評価額のうち1,800万円までをNISA、それを超える分を課税口座として簡易表示します。取得価格や課税口座の売却益課税は計算しません。</div>
+    <p class="help">金額はすべて万円単位。利回り・インフレ率は年率です。現在の現金・投資資産・DCは別々に管理します。</p>
   </section>
 
   <section class="panel">
-    <h2>住居費</h2>
-    <div class="choice">
-      <label><input type="radio" name="housingType" value="rent" checked> 賃貸</label>
-      <label><input type="radio" name="housingType" value="buy"> 持ち家・住宅ローン</label>
+    <h2>2. 給与・年金・生活費</h2>
+    <div class="grid">
+      <div class="field">
+        <label for="salary">就労中の額面年収（万円）</label>
+        <input id="salary" type="number" min="0" value="1300">
+      </div>
+      <div class="field">
+        <label for="pension65">65歳時点の年金額（年額・額面万円）</label>
+        <input id="pension65" type="number" min="0" value="120">
+      </div>
+      <div class="field">
+        <label for="pensionAge">年金受給開始年齢</label>
+        <input id="pensionAge" type="number" min="60" max="75" value="65">
+      </div>
+      <div class="field">
+        <label for="preLiving">FIRE前の年間生活費（万円）</label>
+        <input id="preLiving" type="number" min="0" value="500">
+      </div>
+      <div class="field">
+        <label for="postLiving">FIRE後の年間生活費（万円）</label>
+        <input id="postLiving" type="number" min="0" value="500">
+      </div>
+      <div class="field">
+        <label for="sideIncome">FIRE後の追加収入（年額・額面万円）</label>
+        <input id="sideIncome" type="number" min="0" value="0">
+      </div>
+      <div class="field">
+        <label for="sideEndAge">追加収入が終了する年齢</label>
+        <input id="sideEndAge" type="number" min="18" max="120" value="60">
+      </div>
     </div>
-    <div id="rentFields" class="grid" style="margin-top:12px">
-      <div class="field"><label for="rentMonthly">家賃 <span class="unit">万円／月</span></label><input id="rentMonthly" type="number" min="0" step="0.5" value="10"></div>
-      <div class="field"><label for="rentGrowth">家賃上昇率 <span class="unit">%／年</span></label><input id="rentGrowth" type="number" min="-5" max="20" step="0.1" value="1"></div>
-    </div>
-    <div id="buyFields" class="grid hidden" style="margin-top:12px">
-      <div class="field"><label for="homePrice">住宅価格 <span class="unit">万円</span></label><input id="homePrice" type="number" min="0" step="100" value="4000"></div>
-      <div class="field"><label for="downPayment">頭金 <span class="unit">万円</span></label><input id="downPayment" type="number" min="0" step="50" value="0"></div>
-      <div class="field"><label for="loanYears">ローン期間 <span class="unit">年</span></label><input id="loanYears" type="number" min="1" max="50" value="35"></div>
-      <div class="field"><label for="loanRate">住宅ローン金利 <span class="unit">%／年</span></label><input id="loanRate" type="number" min="0" max="20" step="0.1" value="1.5"></div>
-      <div class="field"><label for="homeAnnual">維持費・固定資産税等 <span class="unit">万円／年</span></label><input id="homeAnnual" type="number" min="0" step="5" value="30"></div>
-    </div>
-    <div class="help">住居費は生活費とは別に加算します。持ち家の住宅価格・頭金は現在の現金や投資資産から自動控除せず、ローン返済と維持費のみをキャッシュフローに反映します。</div>
+    <p class="help">給与・追加収入・年金は、簡易的な税・社会保険料控除を用いて手取り額を推計します。実際の税額とは異なる場合があります。</p>
   </section>
 
   <section class="panel">
-    <h2>FIRE後の収入</h2>
-    <div class="choice">
-      <label><input type="radio" name="sideWork" value="no" checked> FIRE後は働かない</label>
-      <label><input type="radio" name="sideWork" value="yes"> FIRE後も収入を得る</label>
+    <h2>3. 住宅設定</h2>
+    <div class="radio-row">
+      <label><input type="radio" name="housing" value="rent" checked> 賃貸</label>
+      <label><input type="radio" name="housing" value="buy"> 住宅購入</label>
     </div>
-    <div id="sideFields" class="grid hidden" style="margin-top:12px">
-      <div class="field"><label for="sideIncome">FIRE後の額面収入 <span class="unit">万円／年</span></label><input id="sideIncome" type="number" min="0" step="10" value="120"></div>
-      <div class="field"><label for="sideEndAge">収入を得る終了年齢</label><input id="sideEndAge" type="number" min="18" max="100" value="60"></div>
+    <div id="rentFields">
+      <div class="grid">
+        <div class="field">
+          <label for="rentMonthly">現在の月額家賃（万円）</label>
+          <input id="rentMonthly" type="number" min="0" step="0.1" value="12">
+        </div>
+        <div class="field">
+          <label for="rentGrowth">家賃上昇率（年％）</label>
+          <input id="rentGrowth" type="number" step="0.1" value="1">
+        </div>
+      </div>
     </div>
-    <div class="help">FIRE後の収入開始年齢は「FIRE予定年齢」と連動します。収入の終了年齢は別に設定できます。</div>
+    <div id="buyFields" class="hidden">
+      <div class="grid">
+        <div class="field">
+          <label for="homePrice">住宅価格（万円）</label>
+          <input id="homePrice" type="number" min="0" value="4400">
+        </div>
+        <div class="field">
+          <label for="downPayment">頭金（万円）</label>
+          <input id="downPayment" type="number" min="0" value="0">
+        </div>
+        <div class="field">
+          <label for="loanYears">住宅ローン期間（年）</label>
+          <input id="loanYears" type="number" min="1" max="50" value="35">
+        </div>
+        <div class="field">
+          <label for="loanRate">住宅ローン金利（年％）</label>
+          <input id="loanRate" type="number" min="0" step="0.1" value="1.5">
+        </div>
+        <div class="field">
+          <label for="homeAnnual">維持費・固定資産税など（年額万円）</label>
+          <input id="homeAnnual" type="number" min="0" value="30">
+        </div>
+      </div>
+      <p class="help">頭金は現在の現金から支払う前提です。頭金が現金を超える場合は、投資資産から不足分を支払います。</p>
+    </div>
   </section>
 
   <section class="panel">
-    <h2>シナリオ設定</h2>
-    <div class="scenario-inputs">
-      <div class="field"><label>基本シナリオの運用利回り <span class="unit">%／年</span></label><input id="baseReturn" type="number" step="0.1" value="4"></div>
-      <div class="field"><label>暴落シナリオの通常利回り <span class="unit">%／年</span></label><input id="crashReturn" type="number" step="0.1" value="4"></div>
-      <div class="field"><label>暴落率 <span class="unit">%</span></label><input id="crashPct" type="number" min="-100" max="0" step="1" value="-30"></div>
-      <div class="field"><label>暴落が起きる年齢</label><input id="crashAge" type="number" min="18" max="120" value="50"></div>
-      <div class="field"><label>低迷シナリオの低利回り期間 <span class="unit">年</span></label><input id="lowYears" type="number" min="0" max="50" value="5"></div>
-      <div class="field"><label>低迷期間中の利回り <span class="unit">%／年</span></label><input id="lowReturn" type="number" step="0.1" value="0"></div>
-      <div class="field"><label>低迷期間終了後の利回り <span class="unit">%／年</span></label><input id="lowAfterReturn" type="number" step="0.1" value="4"></div>
+    <h2>4. 暴落・低迷シナリオ</h2>
+    <div class="section-title">暴落シナリオ</div>
+    <div class="grid">
+      <div class="field">
+        <label for="crashPct">暴落率（％）</label>
+        <input id="crashPct" type="number" max="0" step="1" value="-30">
+      </div>
+      <div class="field">
+        <label for="crashAge">暴落が起こる年齢</label>
+        <input id="crashAge" type="number" min="18" max="120" value="50">
+      </div>
+      <div class="field">
+        <label for="crashReturn">暴落後の通常利回り（年％）</label>
+        <input id="crashReturn" type="number" step="0.1" value="4">
+      </div>
     </div>
-    <div class="help">暴落は指定年齢の年初に投資資産とDC・iDeCoに一度だけ適用します。低迷シナリオはシミュレーション開始から指定年数、低利回りが続く想定です。</div>
+    <div class="section-title">低迷シナリオ</div>
+    <div class="grid">
+      <div class="field">
+        <label for="lowYears">低迷が続く年数</label>
+        <input id="lowYears" type="number" min="0" max="100" value="5">
+      </div>
+      <div class="field">
+        <label for="lowReturn">低迷期間の利回り（年％）</label>
+        <input id="lowReturn" type="number" step="0.1" value="0">
+      </div>
+      <div class="field">
+        <label for="lowAfterReturn">低迷終了後の利回り（年％）</label>
+        <input id="lowAfterReturn" type="number" step="0.1" value="4">
+      </div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>5. シミュレーション</h2>
+    <div class="notice">
+      FIRE達成判定は、寿命までの各年で生活費・住宅費を支払えるかどうかで判断します。現金の目標額に届かないことだけでは未達成になりません。
+    </div>
     <div class="actions">
-      <button id="calculateBtn">シミュレーションを実行</button>
-      <button id="reverseBtn" class="secondary">必要な就労年数を逆算</button>
-      <button id="resetBtn" class="secondary">初期値に戻す</button>
+      <button class="primary" id="runButton">シミュレーションを実行</button>
+      <button class="secondary" id="resetButton">初期値に戻す</button>
+    </div>
+    <div id="summary" style="margin-top:16px"></div>
+  </section>
+
+  <section class="panel">
+    <h2>6. 資産推移グラフ</h2>
+    <div class="legend">
+      <span><i class="dot" style="background:#2563eb"></i>基本</span>
+      <span><i class="dot" style="background:#dc2626"></i>暴落</span>
+      <span><i class="dot" style="background:#16a34a"></i>低迷</span>
+    </div>
+    <div class="chart-wrap"><canvas id="assetChart"></canvas></div>
+    <p class="help">グラフは現金・投資資産・DCを合算した資産総額です。FIRE年齢は縦線で示します。</p>
+  </section>
+
+  <section class="panel">
+    <h2>7. 年次資産推移</h2>
+    <div class="field" style="max-width:320px;margin-bottom:12px">
+      <label for="tableScenario">表示するシナリオ</label>
+      <select id="tableScenario" class="selector">
+        <option value="basic">基本シナリオ</option>
+        <option value="crash">暴落シナリオ</option>
+        <option value="low">低迷シナリオ</option>
+      </select>
+    </div>
+    <div id="annualTable" class="table-wrap"></div>
+  </section>
+
+  <section class="panel">
+    <h2>8. FIRE年齢を逆算</h2>
+    <p class="muted">選択したシナリオで、寿命まで支払い不能にならない最も早いFIRE年齢を探します。</p>
+    <div class="grid">
+      <div class="field">
+        <label for="reverseScenario">逆算に使うシナリオ</label>
+        <select id="reverseScenario" class="selector">
+          <option value="basic">基本シナリオ</option>
+          <option value="crash">暴落シナリオ</option>
+          <option value="low">低迷シナリオ</option>
+        </select>
+      </div>
+    </div>
+    <div class="actions">
+      <button class="primary" id="reverseButton">FIRE年齢を逆算</button>
+    </div>
+    <div id="reverseResult" class="reverse-result" aria-live="polite">
+      逆算を実行すると、選択したシナリオでの最短FIRE年齢を表示します。
     </div>
   </section>
 
   <section class="panel">
-    <h2>シミュレーション結果</h2>
-    <div id="summary" class="results"><div class="muted">「シミュレーションを実行」を押してください。</div></div>
-    <div id="reverseResult" class="note" style="margin-top:12px"></div>
-  </section>
-
-  <section class="panel">
-    <h2>各シナリオの資産推移</h2>
-    <div class="note">縦軸：総資産（万円）／横軸：年齢。総資産は現金＋投資資産＋DC・iDeCoです。FIRE予定年齢を縦線で表示します。</div>
-    <div class="chart-wrap"><canvas id="assetChart" aria-label="各シナリオの資産推移グラフ"></canvas></div>
-    <div id="chartLegend" class="note" style="margin-top:8px"></div>
-  </section>
-
-  <section class="panel">
-    <h2>年次資産推移</h2>
-    <div class="note">現金は「その年の生活費＋住居費」1年分を目標に確保します。不足時は投資資産から補充し、投資資産が足りずDC・iDeCoを利用できる年齢なら、DC・iDeCoからも補充します。資産が尽きた後の不足は未充足支出として記録します。</div>
-    <div id="annualTable" class="table-wrap"><div class="muted">計算後に年次表を表示します。</div></div>
-  </section>
-
-  <section class="panel">
-    <h2>計算上の注意</h2>
-    <ul class="note">
-      <li>給与・年金の手取りは、日本の税・社会保険料を簡易推計した概算です。扶養、自治体、加入健保、各種控除、賞与構成などで実額は変わります。</li>
-      <li>年金は65歳開始時の額面を基準に、60〜64歳の繰上げは月0.4%減額、66〜75歳の繰下げは月0.7%増額として概算します（対象となる生年月日の制度を想定）。</li>
-      <li>年金・給与の手取り率を直接入力する必要はありません。税・社会保険の将来制度変更は予測していません。</li>
-      <li>投資利回りは一定値として計算し、税・売買手数料・課税口座の売却益課税・市場変動の細かな順序はモデル化していません。結果は予測ではなく、条件比較のための試算です。</li>
-      <li>住宅購入の初期費用・住宅価格の変動・売却価値は計算していません。購入を比較する場合は、頭金等を現金から別途差し引く必要があります。</li>
+    <h2>計算上の注意点</h2>
+    <ul class="help">
+      <li>将来の運用利回りは一定と仮定しており、実際の相場変動・手数料・税金を完全には再現しません。</li>
+      <li>暴落シナリオは指定年齢に一度だけ暴落率を適用します。低迷シナリオはFIRE後の指定年数に低迷利回りを適用します。</li>
+      <li>年金の繰上げ・繰下げ率は概算です。年金額・税金・社会保険料は個人の状況により異なります。</li>
+      <li>住宅購入時は頭金を資産から差し引き、ローン返済と維持費を計上します。住宅の売却価値や売却費用は計上しません。</li>
+      <li>DC・iDeCoは設定した年齢以降に取り崩せるものとして扱います。受取時の税金・受取方法による差は別途計算していません。</li>
+      <li>投資資産の取り崩しは、課税口座・NISAなどの内訳を分けずに計算します。</li>
+      <li>年次計算のため、各年の途中で起きる資金不足や月単位の収支変動は再現しません。</li>
     </ul>
   </section>
 </main>
 
 <script>
-const $ = id => document.getElementById(id);
-const num = id => Math.max(0, Number($(id).value) || 0);
-const pct = id => (Number($(id).value) || 0) / 100;
-const fmt = n => Number.isFinite(n) ? Math.round(n).toLocaleString('ja-JP') : '—';
-const money = n => `${fmt(n)}万円`;
-const setVal = (id,v) => { $(id).value = v; };
+"use strict";
 
-function readInputs(){
-  const housingType = document.querySelector('input[name="housingType"]:checked').value;
-  const sideWork = document.querySelector('input[name="sideWork"]:checked').value === 'yes';
+const $ = id => document.getElementById(id);
+const scenarioNames = {
+  basic: "基本シナリオ",
+  crash: "暴落シナリオ",
+  low: "低迷シナリオ"
+};
+const scenarioColors = {
+  basic: "#2563eb",
+  crash: "#dc2626",
+  low: "#16a34a"
+};
+
+function num(id) {
+  const v = Number($(id).value);
+  return Number.isFinite(v) ? v : 0;
+}
+function pct(id) { return num(id) / 100; }
+function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
+function money(v) {
+  if (!Number.isFinite(v)) return "—";
+  return Math.round(v).toLocaleString("ja-JP") + "万円";
+}
+function signedMoney(v) {
+  return (v > 0 ? "+" : "") + money(v);
+}
+function selectedHousing() {
+  return document.querySelector('input[name="housing"]:checked').value;
+}
+function readConfig() {
+  const currentAge = Math.round(clamp(num("currentAge"), 18, 100));
+  const lifeAge = Math.round(clamp(num("lifeAge"), currentAge, 120));
   return {
-    currentAge:Math.round(num('currentAge')),
-    fireAge:Math.round(num('fireAge')),
-    lifeAge:Math.round(num('lifeAge')),
-    cash:num('cash'),
-    investments:num('investments'),
-    dc:num('dc'),
-    dcAge:Math.round(num('dcAge')),
-    salary:num('salary'),
-    pension65:num('pension65'),
-    pensionAge:Math.round(num('pensionAge')),
-    preLiving:num('preLiving'),
-    postLiving:num('postLiving'),
-    inflation:pct('inflation'),
-    housingType,
-    rentMonthly:num('rentMonthly'),
-    rentGrowth:pct('rentGrowth'),
-    homePrice:num('homePrice'),
-    downPayment:num('downPayment'),
-    loanYears:Math.max(1,Math.round(num('loanYears'))),
-    loanRate:pct('loanRate'),
-    homeAnnual:num('homeAnnual'),
-    sideWork,
-    sideIncome:num('sideIncome'),
-    sideEndAge:Math.round(num('sideEndAge')),
-    baseReturn:pct('baseReturn'),
-    crashReturn:pct('crashReturn'),
-    crashPct:pct('crashPct'),
-    crashAge:Math.round(num('crashAge')),
-    lowYears:Math.round(num('lowYears')),
-    lowReturn:pct('lowReturn'),
-    lowAfterReturn:pct('lowAfterReturn')
+    currentAge,
+    fireAge: Math.round(clamp(num("fireAge"), currentAge, lifeAge)),
+    lifeAge,
+    cash: Math.max(0, num("cash")),
+    investments: Math.max(0, num("investments")),
+    dc: Math.max(0, num("dc")),
+    dcAge: Math.round(clamp(num("dcAge"), 40, 100)),
+    inflation: pct("inflation"),
+    baseReturn: pct("baseReturn"),
+    salary: Math.max(0, num("salary")),
+    pension65: Math.max(0, num("pension65")),
+    pensionAge: Math.round(clamp(num("pensionAge"), 60, 75)),
+    preLiving: Math.max(0, num("preLiving")),
+    postLiving: Math.max(0, num("postLiving")),
+    sideIncome: Math.max(0, num("sideIncome")),
+    sideEndAge: Math.round(clamp(num("sideEndAge"), 18, 120)),
+    housing: selectedHousing(),
+    rentMonthly: Math.max(0, num("rentMonthly")),
+    rentGrowth: pct("rentGrowth"),
+    homePrice: Math.max(0, num("homePrice")),
+    downPayment: Math.max(0, num("downPayment")),
+    loanYears: Math.max(1, Math.round(num("loanYears"))),
+    loanRate: pct("loanRate"),
+    homeAnnual: Math.max(0, num("homeAnnual")),
+    crashPct: pct("crashPct"),
+    crashAge: Math.round(num("crashAge")),
+    crashReturn: pct("crashReturn"),
+    lowYears: Math.max(0, Math.round(num("lowYears"))),
+    lowReturn: pct("lowReturn"),
+    lowAfterReturn: pct("lowAfterReturn")
   };
 }
 
-// 給与の手取り概算（万円／年）
-function salaryNet(gross){
-  gross = Math.max(0,gross);
-  if(!gross) return 0;
-
-  const social = Math.min(gross,1500)*0.145
-               + Math.max(0,gross-1500)*0.03;
-
-  let employmentIncome;
-  if(gross<=162.5) employmentIncome=Math.max(0,gross-55);
-  else if(gross<=180) employmentIncome=gross*0.4-10;
-  else if(gross<=360) employmentIncome=gross*0.3+8;
-  else if(gross<=660) employmentIncome=gross*0.2+44;
-  else if(gross<=850) employmentIncome=gross*0.1+110;
-  else employmentIncome=Math.max(0,gross-195);
-
-  const incomeTaxable=Math.max(0,employmentIncome-social-58);
-  const incomeTax=calcIncomeTax(incomeTaxable)*1.021;
-  const residentTax=Math.max(0,employmentIncome-social-43)*0.10+0.5;
-
-  return Math.max(0,gross-social-incomeTax-residentTax);
+/* 税・社会保険料の簡易推計。万円単位。 */
+function salaryNet(gross) {
+  if (gross <= 0) return 0;
+  const employmentDeduction = gross <= 162.5 ? 55
+    : gross <= 180 ? gross * 0.4 - 10
+    : gross <= 360 ? gross * 0.3 + 8
+    : gross <= 660 ? gross * 0.2 + 44
+    : gross <= 850 ? gross * 0.1 + 110
+    : 195;
+  const salaryIncome = Math.max(0, gross - employmentDeduction);
+  const social = gross * 0.145;
+  const taxable = Math.max(0, salaryIncome - 48 - social);
+  const incomeTax = progressiveIncomeTax(taxable);
+  const residentTax = Math.max(0, salaryIncome - 43 - social) * 0.10;
+  return Math.max(0, gross - social - incomeTax - residentTax);
 }
-
-function calcIncomeTax(taxable){
-  const brackets=[
-    [195,0.05,0],
-    [330,0.10,9.75],
-    [695,0.20,42.75],
-    [900,0.23,63.6],
-    [1800,0.33,153.6],
-    [4000,0.40,279.6],
-    [Infinity,0.45,479.6]
+function progressiveIncomeTax(taxable) {
+  const brackets = [
+    [195, .05, 0], [330, .10, 9.75], [695, .20, 42.75],
+    [900, .23, 63.6], [1800, .33, 153.6],
+    [4000, .40, 279.6], [Infinity, .45, 479.6]
   ];
-  for(const [limit,rate,deduction] of brackets){
-    if(taxable<=limit) return Math.max(0,taxable*rate-deduction);
+  for (const [limit, rate, deduction] of brackets) {
+    if (taxable <= limit) return Math.max(0, taxable * rate - deduction);
   }
   return 0;
 }
-
-// 65歳開始時の年金額に、繰上げ・繰下げ率を反映
-function pensionGross(p65,startAge){
-  const months=Math.round((startAge-65)*12);
-  const factor=months<0 ? 1+months*0.004 : 1+months*0.007;
-  return p65*Math.max(0.76,factor);
-}
-
-// 年金の手取り概算（万円／年）
-function pensionNet(gross,age){
-  if(gross<=0) return 0;
-
-  const deduction=age>=65
-    ? (gross<=330?110:gross<=410?gross*0.25+27.5:gross<=770?gross*0.15+68.5:gross*0.05+145.5)
-    : (gross<=130?60:gross<=410?gross*0.25+27.5:gross<=770?gross*0.15+68.5:gross*0.05+145.5);
-
-  const social=gross*(age>=75?0.09:age>=65?0.13:0.15);
-  const taxable=Math.max(0,gross-deduction-social-58);
-  const incomeTax=calcIncomeTax(taxable)*1.021;
-  const residentTax=Math.max(0,gross-deduction-social-43)*0.10;
-
-  return Math.max(0,gross-social-incomeTax-residentTax);
-}
-
-function loanPayment(principal,annualRate,years){
-  if(principal<=0) return 0;
-  const r=annualRate/12;
-  const n=years*12;
-  return r===0 ? principal/n
-    : principal*r*Math.pow(1+r,n)/(Math.pow(1+r,n)-1);
-}
-
-function housingCost(input,age,elapsed){
-  if(input.housingType==='rent'){
-    return input.rentMonthly*12*Math.pow(1+input.rentGrowth,elapsed);
+function pensionGross(c) {
+  let factor = 1;
+  if (c.pensionAge < 65) {
+    factor = 1 - (65 - c.pensionAge) * 12 * 0.004;
+  } else if (c.pensionAge > 65) {
+    factor = 1 + (c.pensionAge - 65) * 12 * 0.007;
   }
-  const principal=Math.max(0,input.homePrice-input.downPayment);
-  const monthly=loanPayment(principal,input.loanRate,input.loanYears);
-  const loanCost=elapsed<input.loanYears ? monthly*12 : 0;
-  return loanCost+input.homeAnnual;
+  return c.pension65 * factor;
+}
+function pensionNet(gross) {
+  if (gross <= 0) return 0;
+  // 公的年金等控除・税・保険料をまとめた簡易推計
+  const deduction = gross <= 110 ? gross : Math.max(110, gross * 0.25 + 27.5);
+  const taxable = Math.max(0, gross - deduction - 48);
+  return Math.max(0, gross - progressiveIncomeTax(taxable) - taxable * 0.10 - gross * 0.08);
+}
+function loanAnnualPayment(principal, annualRate, years) {
+  if (principal <= 0 || years <= 0) return 0;
+  if (annualRate === 0) return principal / years;
+  const r = annualRate;
+  const factor = Math.pow(1 + r, years);
+  return principal * r * factor / (factor - 1);
+}
+function housingCost(c, age) {
+  const elapsed = age - c.currentAge;
+  if (c.housing === "rent") {
+    return c.rentMonthly * 12 * Math.pow(1 + c.rentGrowth, Math.max(0, elapsed));
+  }
+  const principal = Math.max(0, c.homePrice - c.downPayment);
+  const payment = loanAnnualPayment(principal, c.loanRate, c.loanYears);
+  const loanElapsed = age - c.currentAge;
+  return (loanElapsed >= 0 && loanElapsed < c.loanYears ? payment : 0) + c.homeAnnual;
+}
+function annualLiving(c, age, fireAge) {
+  const base = age < fireAge ? c.preLiving : c.postLiving;
+  return base * Math.pow(1 + c.inflation, Math.max(0, age - c.currentAge));
+}
+function annualPension(c, age) {
+  if (age < c.pensionAge) return 0;
+  const gross = pensionGross(c);
+  // 受給開始後はインフレに合わせて名目額を増やす仮定
+  return pensionNet(gross) * Math.pow(1 + c.inflation, Math.max(0, age - c.pensionAge));
+}
+function annualSideIncome(c, age, fireAge) {
+  if (age < fireAge || age > c.sideEndAge) return 0;
+  return salaryNet(c.sideIncome);
+}
+function getReturn(c, scenario, age, fireAge) {
+  if (scenario === "basic") return c.baseReturn;
+  if (scenario === "crash") {
+    return c.crashReturn;
+  }
+  if (scenario === "low") {
+    return age >= fireAge && age < fireAge + c.lowYears
+      ? c.lowReturn : c.lowAfterReturn;
+  }
+  return c.baseReturn;
 }
 
-function scenarioList(input){
-  return [
-    {key:'basic',name:'基本',color:'#2563eb',rate:input.baseReturn,crash:false,low:false},
-    {key:'crash',name:'暴落',color:'#dc2626',rate:input.crashReturn,crash:true,low:false},
-    {key:'low',name:'低迷',color:'#d97706',rate:input.lowAfterReturn,crash:false,low:true}
-  ];
-}
+/*
+ * 各年の流れ：
+ * 1. 投資資産・DCを運用
+ * 2. 指定年齢に暴落を適用（暴落シナリオのみ）
+ * 3. 給与・追加収入・年金を現金に加算
+ * 4. 生活費・住宅費を現金から支払う
+ * 5. 現金が不足した場合は投資資産、次に利用可能なDCから補填
+ * 6. 年間生活費＋住宅費の1年分を現金目標額として補充
+ *
+ * 現金目標に届かないことだけでは未達成としない。
+ * 実際の支払いを全資産で賄えない場合のみ資産不足とする。
+ */
+function runScenario(c, scenario, fireAge) {
+  let cash = c.cash;
+  let investments = c.investments;
+  let dc = c.dc;
+  let firstShortageAge = null;
+  let totalShortage = 0;
+  let rows = [];
 
-function runScenario(input,fireAge,scenario){
-  let cash=input.cash;
-  let investments=input.investments;
-  let dc=input.dc;
-  let firstDepletedAge=null;
-  let shortageTotal=0;
-  let crashApplied=false;
-  const rows=[];
-  const startAge=input.currentAge;
-  const endAge=Math.max(startAge,input.lifeAge);
+  // 住宅購入の頭金は初期資産から支出
+  if (c.housing === "buy" && c.downPayment > 0) {
+    const fromCash = Math.min(cash, c.downPayment);
+    cash -= fromCash;
+    const remainder = c.downPayment - fromCash;
+    const fromInvestments = Math.min(investments, remainder);
+    investments -= fromInvestments;
+    const unpaidDownPayment = remainder - fromInvestments;
+    if (unpaidDownPayment > 0) {
+      firstShortageAge = c.currentAge;
+      totalShortage += unpaidDownPayment;
+    }
+  }
 
-  for(let age=startAge;age<=endAge;age++){
-    const elapsed=age-startAge;
-    const yearsInflation=Math.pow(1+input.inflation,elapsed);
-    const isPreFire=age<fireAge;
+  for (let age = c.currentAge; age <= c.lifeAge; age++) {
+    const investmentReturn = getReturn(c, scenario, age, fireAge);
 
-    const living=(isPreFire?input.preLiving:input.postLiving)*yearsInflation;
-    const housing=housingCost(input,age,elapsed)*Math.pow(1+input.inflation,elapsed);
+    // 運用は年初の残高に対して行う
+    investments = Math.max(0, investments * (1 + investmentReturn));
+    dc = Math.max(0, dc * (1 + investmentReturn));
 
-    let rate=scenario.rate;
-    if(scenario.low&&elapsed<input.lowYears) rate=input.lowReturn;
-
-    if(scenario.crash&&!crashApplied&&age===input.crashAge){
-      investments*=Math.max(0,1+input.crashPct);
-      dc*=Math.max(0,1+input.crashPct);
-      crashApplied=true;
+    // 暴落は指定年齢に一度だけ、投資資産へ適用
+    if (scenario === "crash" && age === c.crashAge) {
+      investments = Math.max(0, investments * (1 + c.crashPct));
     }
 
-    investments=Math.max(0,investments*(1+rate));
-    dc=Math.max(0,dc*(1+rate));
+    const salary = age < fireAge ? salaryNet(c.salary) : 0;
+    const side = annualSideIncome(c, age, fireAge);
+    const pension = annualPension(c, age);
+    const income = salary + side + pension;
+    cash += income;
 
-    const salary=isPreFire?salaryNet(input.salary):0;
-    const side=(input.sideWork&&age>=fireAge&&age<=input.sideEndAge)
-      ?salaryNet(input.sideIncome):0;
+    const living = annualLiving(c, age, fireAge);
+    const housing = housingCost(c, age);
+    const expenses = living + housing;
+    cash -= expenses;
 
-    const pGross=age>=input.pensionAge
-      ? pensionGross(input.pension65,input.pensionAge)
-        *Math.pow(1+input.inflation,Math.max(0,age-input.pensionAge))
-      : 0;
-    const pension=pensionNet(pGross,age);
-    const income=salary+side+pension;
-    const expenses=living+housing;
+    // 実際の支払いに必要な現金を、投資資産から補う
+    if (cash < 0) {
+      let need = -cash;
+      const fromInvestments = Math.min(investments, need);
+      investments -= fromInvestments;
+      need -= fromInvestments;
 
-    cash+=income-expenses;
-
-    // 現金は年間生活費＋住居費の1年分を目標にする
-    const reserve=expenses;
-    if(cash<reserve){
-      let need=reserve-cash;
-
-      const fromInvest=Math.min(investments,need);
-      investments-=fromInvest;
-      cash+=fromInvest;
-      need-=fromInvest;
-
-      if(need>0&&age>=input.dcAge){
-        const fromDC=Math.min(dc,need);
-        dc-=fromDC;
-        cash+=fromDC;
-        need-=fromDC;
+      if (age >= c.dcAge) {
+        const fromDc = Math.min(dc, need);
+        dc -= fromDc;
+        need -= fromDc;
       }
 
-      if(need>0){
-        shortageTotal+=need;
-        if(firstDepletedAge===null) firstDepletedAge=age;
+      if (need > 0.000001) {
+        if (firstShortageAge === null) firstShortageAge = age;
+        totalShortage += need;
+        cash = 0;
+      } else {
+        cash = 0;
       }
     }
 
-    const total=Math.max(0,cash)+investments+dc;
-    if(cash<0) cash=0;
+    // 年間支出1年分を現金で確保。足りない分は投資資産、次に利用可能なDCから補充。
+    const reserveTarget = expenses;
+    if (cash < reserveTarget) {
+      let reserveNeed = reserveTarget - cash;
+      const fromInvestments = Math.min(investments, reserveNeed);
+      investments -= fromInvestments;
+      cash += fromInvestments;
+      reserveNeed -= fromInvestments;
 
+      if (reserveNeed > 0 && age >= c.dcAge) {
+        const fromDc = Math.min(dc, reserveNeed);
+        dc -= fromDc;
+        cash += fromDc;
+        reserveNeed -= fromDc;
+      }
+      // reserveNeed が残っても、実際の支払いができていれば未達成にはしない。
+    }
+
+    const totalAssets = Math.max(0, cash) + Math.max(0, investments) + Math.max(0, dc);
     rows.push({
-      age,cash,investments,dc,total,income,salary,side,pension,
-      expenses,living,housing,reserve,shortage:Math.max(0,reserve-(cash+investments+dc)),rate
+      age, cash: Math.max(0, cash), investments: Math.max(0, investments),
+      dc: Math.max(0, dc), totalAssets, salary, side, pension, income,
+      living, housing, expenses, reserveTarget,
+      shortage: (firstShortageAge === age && totalShortage > 0) ? totalShortage : 0
     });
   }
 
-  const final=rows[rows.length-1];
   return {
-    scenario,rows,
-    finalAssets:final?final.total:0,
-    shortageTotal,firstDepletedAge,
-    success:shortageTotal<0.5
+    scenario,
+    fireAge,
+    rows,
+    finalAssets: rows.length ? rows[rows.length - 1].totalAssets : 0,
+    firstShortageAge,
+    totalShortage,
+    success: firstShortageAge === null || totalShortage <= 0.000001
   };
 }
-
-function runAll(input,fireAge=input.fireAge){
-  return scenarioList(input).map(s=>runScenario(input,fireAge,s));
+function runAll(c, fireAge) {
+  return {
+    basic: runScenario(c, "basic", fireAge),
+    crash: runScenario(c, "crash", fireAge),
+    low: runScenario(c, "low", fireAge)
+  };
 }
-
-function validate(input){
-  if(input.currentAge<18||input.currentAge>100){
-    return '現在の年齢は18〜100歳で入力してください。';
-  }
-  if(input.fireAge<input.currentAge||input.fireAge>input.lifeAge){
-    return 'FIRE予定年齢は現在の年齢以上、寿命（予定）以下にしてください。';
-  }
-  if(input.lifeAge<input.currentAge||input.lifeAge>120){
-    return '寿命（予定）は現在の年齢以上、120歳以下にしてください。';
-  }
-  if(input.pensionAge<60||input.pensionAge>75){
-    return '年金開始年齢は60〜75歳で入力してください。';
-  }
-  return '';
+function statusHTML(result) {
+  if (result.success) return '<span class="status ok">FIRE達成</span>';
+  return '<span class="status ng">FIRE未達成</span>';
 }
-
-function renderSummary(results){
-  $('summary').innerHTML=results.map(r=>`
-    <div class="result">
-      <div class="name">${r.scenario.name}シナリオ</div>
-      <div class="big">${money(r.finalAssets)}</div>
-      <div class="muted">寿命時点の総資産</div>
-      <div class="status ${r.success?'ok':'ng'}">
-        ${r.success?'資産枯渇なし':'資産不足の可能性あり'}
-      </div>
-      <div class="muted">
-        ${r.firstDepletedAge===null?'寿命まで資産で支出を賄える想定':`不足が初めて発生：${r.firstDepletedAge}歳`}
-      </div>
-      <div class="muted">不足累計の概算：${money(r.shortageTotal)}</div>
-    </div>
-  `).join('');
-}
-
-function renderTable(results){
-  if(!results.length){
-    $('annualTable').innerHTML='';
-    return;
+function renderSummary(results) {
+  let html = '<div class="cards">';
+  for (const key of ["basic", "crash", "low"]) {
+    const r = results[key];
+    html += `
+      <div class="result-card">
+        <h3>${scenarioNames[key]}</h3>
+        <div style="margin:6px 0">${statusHTML(r)}</div>
+        <div class="muted">終了年齢時点の資産</div>
+        <div class="big-number">${money(r.finalAssets)}</div>
+        <div class="result-line">資産不足が初めて発生する年齢：<strong>${r.firstShortageAge === null ? "なし" : r.firstShortageAge + "歳"}</strong></div>
+        <div class="result-line">支払い不足の累計：<strong>${money(r.totalShortage)}</strong></div>
+      </div>`;
   }
-
-  const rows=results[0].rows;
-  let html='<table><thead><tr><th>年齢</th><th>基本 総資産</th><th>暴落 総資産</th><th>低迷 総資産</th><th>基本 現金</th><th>基本 投資資産</th><th>基本 DC/iDeCo</th><th>基本 年間収入</th><th>基本 生活費</th><th>基本 住居費</th><th>基本 利回り</th></tr></thead><tbody>';
-
-  rows.forEach((row,i)=>{
-    const b=results[0].rows[i];
-    const c=results[1].rows[i];
-    const l=results[2].rows[i];
-
-    html+=`<tr>
+  html += '</div>';
+  $("summary").innerHTML = html;
+}
+function renderTable(results) {
+  const key = $("tableScenario").value;
+  const r = results[key];
+  let html = `<p class="muted">${scenarioNames[key]}のみ表示しています。</p>
+    <table><thead><tr>
+    <th>年齢</th><th>現金</th><th>投資資産</th><th>DC・iDeCo</th>
+    <th>総資産</th><th>給与手取り</th><th>追加収入</th><th>年金手取り</th>
+    <th>生活費</th><th>住宅費</th><th>支払い不足</th>
+    </tr></thead><tbody>`;
+  for (const row of r.rows) {
+    html += `<tr>
       <td>${row.age}歳</td>
-      <td>${fmt(b.total)}</td>
-      <td>${fmt(c.total)}</td>
-      <td>${fmt(l.total)}</td>
-      <td>${fmt(b.cash)}</td>
-      <td>${fmt(b.investments)}</td>
-      <td>${fmt(b.dc)}</td>
-      <td>${fmt(b.income)}</td>
-      <td>${fmt(b.living)}</td>
-      <td>${fmt(b.housing)}</td>
-      <td>${(b.rate*100).toFixed(1)}%</td>
+      <td>${money(row.cash)}</td>
+      <td>${money(row.investments)}</td>
+      <td>${money(row.dc)}</td>
+      <td><strong>${money(row.totalAssets)}</strong></td>
+      <td>${money(row.salary)}</td>
+      <td>${money(row.side)}</td>
+      <td>${money(row.pension)}</td>
+      <td>${money(row.living)}</td>
+      <td>${money(row.housing)}</td>
+      <td>${row.shortage > 0 ? money(row.shortage) : "—"}</td>
     </tr>`;
-  });
-
-  html+='</tbody></table>';
-  $('annualTable').innerHTML=html;
+  }
+  html += '</tbody></table>';
+  $("annualTable").innerHTML = html;
 }
+function drawChart(results, c, fireAge) {
+  const canvas = $("assetChart");
+  const ctx = canvas.getContext("2d");
+  const rect = canvas.getBoundingClientRect();
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = Math.max(1, Math.round(rect.width * dpr));
+  canvas.height = Math.max(1, Math.round(rect.height * dpr));
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-function drawChart(results,fireAge){
-  const canvas=$('assetChart');
-  const rect=canvas.getBoundingClientRect();
-  const dpr=window.devicePixelRatio||1;
-  const width=Math.max(280,rect.width);
-  const height=340;
+  const w = rect.width, h = rect.height;
+  ctx.clearRect(0, 0, w, h);
+  const pad = { left: 58, right: 12, top: 16, bottom: 34 };
+  const plotW = Math.max(1, w - pad.left - pad.right);
+  const plotH = Math.max(1, h - pad.top - pad.bottom);
+  const allValues = ["basic", "crash", "low"].flatMap(k => results[k].rows.map(x => x.totalAssets));
+  const maxValue = Math.max(1, ...allValues);
+  const yMax = maxValue * 1.08;
+  const minAge = c.currentAge;
+  const maxAge = c.lifeAge;
+  const x = age => pad.left + (maxAge === minAge ? 0 : (age - minAge) / (maxAge - minAge)) * plotW;
+  const y = val => pad.top + plotH - (val / yMax) * plotH;
 
-  canvas.width=width*dpr;
-  canvas.height=height*dpr;
-
-  const ctx=canvas.getContext('2d');
-  ctx.setTransform(dpr,0,0,dpr,0,0);
-  ctx.clearRect(0,0,width,height);
-
-  const pad={l:62,r:18,t:20,b:38};
-  const plotW=width-pad.l-pad.r;
-  const plotH=height-pad.t-pad.b;
-  const all=results.flatMap(r=>r.rows.map(x=>x.total));
-  let maxY=Math.max(100,...all);
-  maxY=Math.ceil(maxY/500)*500;
-
-  const minAge=results[0].rows[0].age;
-  const maxAge=results[0].rows[results[0].rows.length-1].age;
-  const x=age=>pad.l+(age-minAge)/Math.max(1,maxAge-minAge)*plotW;
-  const y=value=>pad.t+plotH-(value/maxY)*plotH;
-
-  ctx.font='11px system-ui';
-  ctx.strokeStyle='#e2e8f0';
-  ctx.fillStyle='#64748b';
-  ctx.lineWidth=1;
-
-  for(let i=0;i<=5;i++){
-    const v=maxY*i/5;
-    const yy=y(v);
-    ctx.beginPath();
-    ctx.moveTo(pad.l,yy);
-    ctx.lineTo(width-pad.r,yy);
-    ctx.stroke();
-    ctx.textAlign='right';
-    ctx.fillText(fmt(v),pad.l-8,yy+4);
+  ctx.font = "11px sans-serif";
+  ctx.lineWidth = 1;
+  ctx.strokeStyle = "#e2e8f0";
+  ctx.fillStyle = "#64748b";
+  for (let i = 0; i <= 4; i++) {
+    const val = yMax * i / 4;
+    const yy = y(val);
+    ctx.beginPath(); ctx.moveTo(pad.left, yy); ctx.lineTo(w - pad.right, yy); ctx.stroke();
+    const label = val >= 10000 ? (val / 10000).toFixed(1) + "億" : Math.round(val).toLocaleString("ja-JP");
+    ctx.textAlign = "right"; ctx.fillText(label, pad.left - 7, yy + 4);
+  }
+  const ageStep = Math.max(5, Math.ceil((maxAge - minAge) / 8 / 5) * 5);
+  for (let age = Math.ceil(minAge / ageStep) * ageStep; age <= maxAge; age += ageStep) {
+    ctx.textAlign = "center";
+    ctx.fillText(String(age), x(age), h - 10);
   }
 
-  const step=maxAge-minAge<=15?2:5;
-  for(let age=Math.ceil(minAge/step)*step;age<=maxAge;age+=step){
-    const xx=x(age);
-    ctx.beginPath();
-    ctx.moveTo(xx,pad.t);
-    ctx.lineTo(xx,pad.t+plotH);
-    ctx.stroke();
-    ctx.textAlign='center';
-    ctx.fillText(String(age),xx,height-15);
-  }
+  const fireX = x(fireAge);
+  ctx.save();
+  ctx.setLineDash([5, 4]);
+  ctx.strokeStyle = "#64748b";
+  ctx.beginPath(); ctx.moveTo(fireX, pad.top); ctx.lineTo(fireX, pad.top + plotH); ctx.stroke();
+  ctx.restore();
+  ctx.textAlign = "left";
+  ctx.fillStyle = "#475569";
+  ctx.fillText("FIRE " + fireAge + "歳", Math.min(fireX + 4, w - 70), pad.top + 12);
 
-  if(fireAge>=minAge&&fireAge<=maxAge){
-    const xx=x(fireAge);
-    ctx.save();
-    ctx.setLineDash([5,4]);
-    ctx.strokeStyle='#475569';
+  for (const key of ["basic", "crash", "low"]) {
+    const rows = results[key].rows;
+    ctx.strokeStyle = scenarioColors[key];
+    ctx.lineWidth = 2.3;
     ctx.beginPath();
-    ctx.moveTo(xx,pad.t);
-    ctx.lineTo(xx,pad.t+plotH);
-    ctx.stroke();
-    ctx.restore();
-    ctx.fillStyle='#475569';
-    ctx.textAlign='left';
-    ctx.fillText('FIRE',Math.min(xx+4,width-45),pad.t+12);
-  }
-
-  results.forEach(r=>{
-    ctx.beginPath();
-    ctx.strokeStyle=r.scenario.color;
-    ctx.lineWidth=2.5;
-
-    r.rows.forEach((row,i)=>{
-      const xx=x(row.age);
-      const yy=y(Math.max(0,row.total));
-      if(i===0) ctx.moveTo(xx,yy);
-      else ctx.lineTo(xx,yy);
+    rows.forEach((row, i) => {
+      if (i === 0) ctx.moveTo(x(row.age), y(row.totalAssets));
+      else ctx.lineTo(x(row.age), y(row.totalAssets));
     });
-
     ctx.stroke();
-  });
-
-  $('chartLegend').innerHTML=results.map(r=>
-    `<span style="display:inline-block;margin-right:14px">
-      <span style="display:inline-block;width:18px;height:3px;vertical-align:middle;background:${r.scenario.color};margin-right:5px"></span>${r.scenario.name}
-    </span>`
-  ).join('')+'　縦の破線：FIRE予定年齢';
-}
-
-function calculate(){
-  const input=readInputs();
-  const error=validate(input);
-  if(error){
-    alert(error);
-    return null;
   }
-
-  const results=runAll(input);
-  renderSummary(results);
-  renderTable(results);
-  drawChart(results,input.fireAge);
-  $('reverseResult').textContent='';
-
-  return {input,results};
 }
+let lastConfig = null;
+let lastResults = null;
 
-function reverse(){
-  const input=readInputs();
-  const error=validate(input);
-
-  if(error){
-    alert(error);
-    return;
+function updateHousingFields() {
+  const isRent = selectedHousing() === "rent";
+  $("rentFields").classList.toggle("hidden", !isRent);
+  $("buyFields").classList.toggle("hidden", isRent);
+}
+function validateConfig(c) {
+  if (c.lifeAge < c.currentAge) {
+    alert("終了年齢は現在の年齢以上にしてください。");
+    return false;
   }
+  if (c.fireAge < c.currentAge || c.fireAge > c.lifeAge) {
+    alert("FIRE年齢は現在の年齢から終了年齢までの範囲で指定してください。");
+    return false;
+  }
+  if (c.housing === "buy" && c.downPayment > c.cash + c.investments) {
+    // 頭金不足は資産不足としてシミュレーション内で判定するため、警告だけ出す
+    return true;
+  }
+  return true;
+}
+function runAndRender() {
+  const c = readConfig();
+  if (!validateConfig(c)) return;
+  lastConfig = c;
+  lastResults = runAll(c, c.fireAge);
+  renderSummary(lastResults);
+  renderTable(lastResults);
+  drawChart(lastResults, c, c.fireAge);
+  $("reverseResult").textContent =
+    "現在の設定では、" + c.fireAge + "歳でFIREした場合の結果を表示しています。";
+}
+function reverseFireAge() {
+  const c = readConfig();
+  if (!validateConfig(c)) return;
 
-  const maxAge=Math.max(input.currentAge,Math.min(input.lifeAge,100));
-  let found=null;
-  let best=null;
+  const scenario = $("reverseScenario").value;
+  let foundAge = null;
+  let foundResult = null;
 
-  for(let age=input.currentAge;age<=maxAge;age++){
-    const results=runAll(input,age);
-    if(results.every(r=>r.success)){
-      found=age;
-      best=results;
+  for (let candidate = c.currentAge; candidate <= c.lifeAge; candidate++) {
+    const result = runScenario(c, scenario, candidate);
+    if (result.success) {
+      foundAge = candidate;
+      foundResult = result;
       break;
     }
   }
 
-  if(found===null){
-    $('reverseResult').innerHTML='<span class="ng"><b>逆算結果：</b>現在の条件では、寿命（予定）まで資産不足を避けられるFIRE年齢が見つかりませんでした。</span>';
-  }else{
-    const years=found-input.currentAge;
-
-    $('reverseResult').innerHTML=
-      `<span class="ok"><b>逆算結果：</b>3シナリオすべてで資産不足を避ける最も早いFIRE年齢は <b>${found}歳</b>（現在から約${years}年後）です。</span> この結果は、現在入力されているFIRE後収入・生活費・住居費などを使って計算しています。`;
-
-    setVal('fireAge',found);
-    renderSummary(best);
-    renderTable(best);
-    drawChart(best,found);
+  if (foundAge === null) {
+    $("reverseResult").innerHTML =
+      `<strong>${scenarioNames[scenario]}では、${c.currentAge}歳から${c.lifeAge}歳までの範囲でFIRE達成可能な年齢が見つかりませんでした。</strong>
+      <p class="muted">資産額、生活費、追加収入、就労年齢、運用利回りなどを見直してください。</p>`;
+    return;
   }
+
+  // 逆算結果をFIRE年齢欄に反映し、全シナリオの結果・表・グラフも更新
+  $("fireAge").value = foundAge;
+  const updated = readConfig();
+  lastConfig = updated;
+  lastResults = runAll(updated, foundAge);
+  renderSummary(lastResults);
+  renderTable(lastResults);
+  drawChart(lastResults, updated, foundAge);
+
+  const years = foundAge - c.currentAge;
+  $("reverseResult").innerHTML =
+    `<div><strong>${scenarioNames[scenario]}での最短FIRE年齢：${foundAge}歳</strong></div>
+     <div>現在からの就労年数：<strong>${years}年</strong></div>
+     <div>終了年齢時点の資産：<strong>${money(foundResult.finalAssets)}</strong></div>
+     <div>資産不足：<strong>なし</strong></div>
+     <p class="muted">FIRE年齢を入力欄に反映しました。基本・暴落・低迷の3シナリオの結果も更新しています。</p>`;
 }
-
-function updateConditionalFields(){
-  const housing=document.querySelector('input[name="housingType"]:checked').value;
-  $('rentFields').classList.toggle('hidden',housing!=='rent');
-  $('buyFields').classList.toggle('hidden',housing!=='buy');
-
-  const side=document.querySelector('input[name="sideWork"]:checked').value==='yes';
-  $('sideFields').classList.toggle('hidden',!side);
+function resetDefaults() {
+  const defaults = {
+    currentAge:44, fireAge:44, lifeAge:95, cash:3000, investments:13000, dc:850,
+    dcAge:60, inflation:2, baseReturn:4, salary:1300, pension65:120, pensionAge:65,
+    preLiving:500, postLiving:500, sideIncome:0, sideEndAge:60,
+    rentMonthly:12, rentGrowth:1, homePrice:4400, downPayment:0,
+    loanYears:35, loanRate:1.5, homeAnnual:30, crashPct:-30, crashAge:50,
+    crashReturn:4, lowYears:5, lowReturn:0, lowAfterReturn:4
+  };
+  for (const [id, value] of Object.entries(defaults)) $(id).value = value;
+  document.querySelector('input[name="housing"][value="rent"]').checked = true;
+  $("tableScenario").value = "basic";
+  $("reverseScenario").value = "basic";
+  updateHousingFields();
+  runAndRender();
 }
-
-document.querySelectorAll('input[name="housingType"],input[name="sideWork"]')
-  .forEach(el=>el.addEventListener('change',updateConditionalFields));
-
-$('calculateBtn').addEventListener('click',calculate);
-$('reverseBtn').addEventListener('click',reverse);
-$('resetBtn').addEventListener('click',()=>location.reload());
-
-window.addEventListener('resize',()=>{
-  const input=readInputs();
-  drawChart(runAll(input),input.fireAge);
+$("runButton").addEventListener("click", runAndRender);
+$("resetButton").addEventListener("click", resetDefaults);
+$("reverseButton").addEventListener("click", reverseFireAge);
+$("tableScenario").addEventListener("change", () => {
+  if (lastResults) renderTable(lastResults);
+});
+document.querySelectorAll('input[name="housing"]').forEach(el =>
+  el.addEventListener("change", updateHousingFields)
+);
+window.addEventListener("resize", () => {
+  if (lastResults && lastConfig) drawChart(lastResults, lastConfig, lastConfig.fireAge);
 });
 
-updateConditionalFields();
-calculate();
+updateHousingFields();
+runAndRender();
 </script>
 </body>
 </html>
