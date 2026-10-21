@@ -65,6 +65,27 @@ button:disabled { opacity:.55; cursor:wait; }
 .notice { background:#eff6ff; border-radius:9px; padding:10px 12px; font-size:.85rem; }
 .reverse-result { margin-top:12px; padding:12px; background:#f8fafc; border-radius:10px; }
 .table-wrap { width:100%; overflow-x:auto; }
+
+/* 年次資産推移：最初の3行だけ表示 */
+#annualTable.collapsed tbody tr:nth-child(n + 4) {
+  display:none;
+}
+
+/* 年次資産推移：展開・折りたたみボタン */
+.table-toggle-wrap {
+  display:flex;
+  justify-content:center;
+  margin-top:12px;
+}
+.table-toggle-btn {
+  background:#e2e8f0;
+  color:#1e293b;
+  padding:10px 20px;
+  border-radius:9px;
+  font-size:.9rem;
+  font-weight:700;
+  cursor:pointer;
+}
 table { border-collapse:collapse; width:100%; font-size:.82rem; }
 th,td {
   border-bottom:1px solid var(--line); padding:8px 7px;
@@ -359,7 +380,15 @@ canvas { display:block; width:100%; height:300px; }
         <option value="low">低迷シナリオ</option>
       </select>
     </div>
-    <div id="annualTable" class="table-wrap"></div>
+    <div id="annualTable" class="table-wrap collapsed"></div>
+    <div class="table-toggle-wrap">
+      <button
+        type="button"
+        id="annualTableToggle"
+        class="table-toggle-btn"
+        aria-expanded="false"
+      >続きを表示 ▼</button>
+    </div>
   </section>
 
   <!-- 9. モンテカルロ設定・結果 -->
@@ -871,6 +900,21 @@ function renderTable(results) {
 
   html += "</tbody></table>";
   $("annualTable").innerHTML = html;
+
+  // 表を再描画したら、先頭3行だけ表示する状態に戻す
+  setAnnualTableCollapsed(true);
+}
+
+/* 年次資産推移の展開・折りたたみ */
+function setAnnualTableCollapsed(collapsed) {
+  const table = $("annualTable");
+  const button = $("annualTableToggle");
+
+  if (!table || !button) return;
+
+  table.classList.toggle("collapsed", collapsed);
+  button.textContent = collapsed ? "続きを表示 ▼" : "折りたたむ ▲";
+  button.setAttribute("aria-expanded", String(!collapsed));
 }
 
 function drawChart(results, c, fireAge) {
@@ -1489,6 +1533,12 @@ $("mcRunButton").addEventListener("click", runMonteCarloAndRender);
 
 $("tableScenario").addEventListener("change", () => {
   if (lastResults) renderTable(lastResults);
+});
+
+// 年次資産推移の展開・折りたたみボタン
+$("annualTableToggle").addEventListener("click", () => {
+  const isCollapsed = $("annualTable").classList.contains("collapsed");
+  setAnnualTableCollapsed(!isCollapsed);
 });
 
 document.querySelectorAll('input[name="housing"]').forEach(input => {
