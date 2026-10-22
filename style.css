@@ -1,1 +1,116 @@
+:root {
+  --bg:#f3f5f9; --card:#fff; --text:#202938;
+  --muted:#64748b; --line:#dce2eb; --blue:#2563eb;
+}
+* { box-sizing:border-box; }
+body {
+  margin:0; background:var(--bg); color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans JP",sans-serif;
+  line-height:1.55;
+}
+main { max-width:1120px; margin:auto; padding:16px; }
+h1 { font-size:1.6rem; margin:4px 0; }
+h2 { font-size:1.15rem; margin:0 0 14px; }
+h3 { font-size:1rem; margin:0 0 8px; }
+p { margin:6px 0 12px; }
+.muted,.help { color:var(--muted); font-size:.86rem; }
+.panel {
+  background:var(--card); border:1px solid var(--line);
+  border-radius:14px; padding:16px; margin:14px 0;
+}
+.grid {
+  display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px;
+}
+.field { min-width:0; }
+.field label { display:block; font-size:.85rem; margin-bottom:4px; }
+.field input,.field select {
+  width:100%; min-width:0; padding:9px 10px;
+  border:1px solid #cbd5e1; border-radius:8px;
+  background:#fff; color:var(--text); font-size:16px;
+}
+.radio-row { display:flex; flex-wrap:wrap; gap:14px; margin:8px 0; }
+.radio-row label { display:flex; align-items:center; gap:6px; }
+.radio-row input { width:auto; }
+.section-title { margin:18px 0 10px; font-weight:700; }
+.actions { display:flex; flex-wrap:wrap; gap:8px; margin-top:16px; }
+button {
+  border:0; border-radius:99px; padding:11px 15px;
+  font-size:.95rem; font-weight:700; cursor:pointer;
+}
+button:disabled { opacity:.55; cursor:wait; }
+.primary { background:var(--blue); color:#fff; }
+.secondary { background:#e2e8f0; color:#1e293b; }
+.cards {
+  display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px;
+}
+.result-card {
+  border:1px solid var(--line); border-radius:12px; padding:12px;
+  min-width:0; background:#fff;
+}
+.big-number { font-size:1.25rem; font-weight:800; overflow-wrap:anywhere; }
+.status {
+  display:inline-block; padding:3px 8px; border-radius:6px;
+  font-size:.8rem; font-weight:700;
+}
+.ok { background:#dcfce7; color:#166534; }
+.ng { background:#fee2e2; color:#991b1b; }
+.result-line { margin-top:8px; font-size:.86rem; }
+.notice { background:#eff6ff; border-radius:9px; padding:10px 12px; font-size:.85rem; }
+.reverse-result { margin-top:12px; padding:12px; background:#f8fafc; border-radius:10px; }
+.table-wrap { width:100%; overflow-x:auto; }
+#annualTable.collapsed tbody tr:nth-child(n + 4) { display:none; }
+.table-toggle-wrap { display:flex; justify-content:center; margin-top:12px; }
+.table-toggle-btn {
+  background:#e2e8f0; color:#1e293b; padding:10px 20px;
+  border-radius:9px; font-size:.9rem; font-weight:700; cursor:pointer;
+}
+table { border-collapse:collapse; width:100%; font-size:.82rem; }
+th,td {
+  border-bottom:1px solid var(--line); padding:8px 7px;
+  text-align:right; white-space:nowrap;
+}
+th { background:#f8fafc; }
+th:first-child,td:first-child { text-align:center; }
+.legend { display:flex; flex-wrap:wrap; gap:12px; font-size:.82rem; }
+.legend span { display:flex; align-items:center; gap:5px; }
+.dot { width:10px; height:10px; display:inline-block; border-radius:50%; }
+canvas { display:block; width:100%; height:300px; }
+.hidden { display:none !important; }
+.probability-grid {
+  display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px;
+  margin-top:14px;
+}
+.probability-card {
+  background:#f8fafc; border:1px solid var(--line);
+  border-radius:12px; padding:13px; min-width:0;
+}
+.probability-card .label { font-size:.82rem; color:var(--muted); }
+.probability-card .value {
+  font-size:1.35rem; font-weight:800; overflow-wrap:anywhere; margin-top:3px;
+}
+.progress-track {
+  height:12px; border-radius:99px; background:#e2e8f0;
+  overflow:hidden; margin-top:10px;
+}
+.progress-fill {
+  height:100%; background:#16a34a; width:0%; transition:width .25s ease;
+}
+.mc-legend { display:flex; flex-wrap:wrap; gap:12px; font-size:.82rem; margin:8px 0 4px; }
+.mc-legend span { display:flex; align-items:center; gap:5px; }
+.mc-line { display:inline-block; width:22px; height:3px; border-radius:2px; background:#2563eb; }
+.mc-band {
+  display:inline-block; width:22px; height:12px; border-radius:3px;
+  background:rgba(37,99,235,.18); border:1px solid rgba(37,99,235,.35);
+}
+@media(max-width:720px) {
+  main { padding:10px; }
+  .grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
+  .cards { grid-template-columns:1fr; }
+  .panel { padding:13px; }
+  h1 { font-size:1.4rem; }
+  canvas { height:260px; }
+}
+@media(max-width:390px) {
+  .grid,.probability-grid { grid-template-columns:1fr; }
+}
 
